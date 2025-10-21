@@ -1,0 +1,5 @@
+{
+  "name": "Copy of Google Sheet Search",
+  "description": "An application to search for data within a public Google Sheet in real-time.",
+  "requestFramePermissions": []
+}
