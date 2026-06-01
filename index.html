@@ -395,10 +395,45 @@
       <div class="step-dot active" id="dot1"></div>
       <div class="step-dot" id="dot2"></div>
       <div class="step-dot" id="dot3"></div>
+      <div class="step-dot" id="dot4"></div>
     </div>
 
-    <!-- ========== STEP 1 ========== -->
+    <!-- ========== STEP 1 (الولاية والمنطقة) ========== -->
     <div class="step-page active" id="step1">
+      <div class="section">
+        <div class="section-header info">اختيار الولاية والمنطقة</div>
+
+        <div class="field-group">
+          <label class="field-label">الولاية <span class="req">*</span></label>
+          <select id="wilaya" onchange="onWilayaChange()">
+            <option value="">اختيار</option>
+            <option value="السويق">السويق</option>
+            <option value="الخابورة">الخابورة</option>
+            <option value="صحم">صحم</option>
+            <option value="صحار">صحار</option>
+            <option value="لوى">لوى</option>
+            <option value="شناص">شناص</option>
+          </select>
+          <div class="error-msg" id="wilaya-err">الرجاء اختيار الولاية</div>
+        </div>
+
+        <div class="field-group" id="regionGroup" style="display:none;">
+          <label class="field-label">المنطقة <span class="req">*</span></label>
+          <select id="region">
+            <option value="">اختيار</option>
+          </select>
+          <div class="error-msg" id="region-err">الرجاء اختيار المنطقة</div>
+        </div>
+
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+        <button class="btn btn-next" onclick="goStep(2)">التالي</button>
+      </div>
+    </div>
+
+    <!-- ========== STEP 2 (بيانات المربي) ========== -->
+    <div class="step-page" id="step2">
       <div class="section">
 
         <div class="field-group">
@@ -438,12 +473,12 @@
       </div>
       <div class="btn-row">
         <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-        <button class="btn btn-next" onclick="goStep(2)">التالي</button>
+        <button class="btn btn-next" onclick="goStep(3)">التالي</button>
       </div>
     </div>
 
-    <!-- ========== STEP 2 ========== -->
-    <div class="step-page" id="step2">
+    <!-- ========== STEP 3 (بيانات الحيازة) ========== -->
+    <div class="step-page" id="step3">
       <div class="section">
         <div class="section-header info">يرجى استكمال البيانات أثناء قبل المتابعة.</div>
 
@@ -463,31 +498,15 @@
 
       </div>
       <div class="btn-row">
-        <button class="btn btn-back" onclick="goStep(1)">رجوع</button>
-        <button class="btn btn-next" onclick="goStep(3)">التالي</button>
+        <button class="btn btn-back" onclick="goStep(2)">رجوع</button>
+        <button class="btn btn-next" onclick="goStep(4)">التالي</button>
       </div>
     </div>
 
-    <!-- ========== STEP 3 ========== -->
-    <div class="step-page" id="step3">
+    <!-- ========== STEP 4 (بيانات الحيوانات) ========== -->
+    <div class="step-page" id="step4">
       <div class="section">
         <div class="section-header" style="background:#555;color:white;">تأمل منكم استكمال البيانات المطلوبة لإتمام الإجراء.</div>
-
-        <div class="field-group">
-          <label class="field-label">المنطقة <span class="req">*</span></label>
-          <select id="region">
-            <option value="">اختيار</option>
-            <option>الخابورة</option>
-            <option>صحم</option>
-            <option>المصنعة</option>
-            <option>شناص</option>
-            <option>لوى</option>
-            <option>سحار</option>
-            <option>الوقيبة</option>
-            <option>حياء</option>
-          </select>
-          <div class="error-msg" id="region-err">الرجاء اختيار المنطقة</div>
-        </div>
 
         <div class="field-group">
           <label class="field-label">عدد الماعز <span class="req">*</span></label>
@@ -509,7 +528,7 @@
 
       </div>
       <div class="btn-row">
-        <button class="btn btn-back" onclick="goStep(2)">رجوع</button>
+        <button class="btn btn-back" onclick="goStep(3)">رجوع</button>
         <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">إرسال</button>
       </div>
     </div>
@@ -533,9 +552,55 @@
   // CONFIGURATION — ضع رابط Google Apps Script هنا
   // =====================================================
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFa7UQnzSDH3xDMalSuWswXB_kZ3hoY8mqnBc17CpA_Scam1TkbOnvdpDa9hYw3sK53g/exec";
+
+  const WILAYA_COLUMNS = {
+    "السويق": "A",
+    "الخابورة": "B",
+    "صحم": "C",
+    "صحار": "D",
+    "لوى": "E",
+    "شناص": "F"
+  };
   // =====================================================
 
   let currentStep = 1;
+
+  async function onWilayaChange() {
+    const wilaya = document.getElementById('wilaya').value;
+    const regionGroup = document.getElementById('regionGroup');
+    const regionSelect = document.getElementById('region');
+    const err = document.getElementById('wilaya-err');
+
+    if (!wilaya) {
+      regionGroup.style.display = 'none';
+      regionSelect.innerHTML = '<option value="">اختيار</option>';
+      return;
+    }
+
+    err.classList.remove('show');
+    regionSelect.innerHTML = '<option value="">جاري التحميل...</option>';
+    regionGroup.style.display = 'block';
+
+    try {
+      const col = WILAYA_COLUMNS[wilaya];
+      const url = GOOGLE_SCRIPT_URL + '?action=getRegions&column=' + encodeURIComponent(col);
+      const response = await fetch(url);
+      const regions = await response.json();
+
+      regionSelect.innerHTML = '<option value="">اختيار</option>';
+      regions.forEach(function(r) {
+        if (r && r.toString().trim()) {
+          const opt = document.createElement('option');
+          opt.value = r.toString().trim();
+          opt.textContent = r.toString().trim();
+          regionSelect.appendChild(opt);
+        }
+      });
+    } catch (e) {
+      regionSelect.innerHTML = '<option value="">خطأ في التحميل</option>';
+      console.error('Error loading regions:', e);
+    }
+  }
 
   function goStep(step) {
     if (step > currentStep && !validateStep(currentStep)) return;
@@ -555,6 +620,11 @@
     let valid = true;
 
     if (step === 1) {
+      valid = checkField('wilaya', v => v !== '') && valid;
+      valid = checkField('region', v => v !== '') && valid;
+    }
+
+    if (step === 2) {
       valid = checkField('phone', v => v.trim().length >= 8) && valid;
       valid = checkField('fullName', v => v.trim().length >= 5) && valid;
       valid = checkField('civilId', v => v.trim().length >= 7) && valid;
@@ -564,13 +634,12 @@
       else { licErr.classList.remove('show'); }
     }
 
-    if (step === 2) {
+    if (step === 3) {
       valid = checkField('licenseNum', v => v.trim().length >= 3) && valid;
       valid = checkField('licenseExpiry', v => v.trim() !== '') && valid;
     }
 
-    if (step === 3) {
-      valid = checkField('region', v => v !== '') && valid;
+    if (step === 4) {
       valid = checkField('goats', v => v !== '') && valid;
       valid = checkField('sheep', v => v !== '') && valid;
       valid = checkField('cows', v => v !== '') && valid;
@@ -598,6 +667,8 @@
     if (confirm('هل تريد محو جميع البيانات المدخلة؟')) {
       document.querySelectorAll('input[type="text"], input[type="tel"], input[type="number"], input[type="date"], select').forEach(el => el.value = '');
       document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+      document.getElementById('regionGroup').style.display = 'none';
+      document.getElementById('region').innerHTML = '<option value="">اختيار</option>';
     }
   }
 
@@ -613,17 +684,18 @@
   }
 
   async function submitForm() {
-    if (!validateStep(3)) return;
+    if (!validateStep(4)) return;
 
     const data = {
       timestamp: new Date().toLocaleString('ar-OM'),
+      wilaya: document.getElementById('wilaya').value,
+      region: document.getElementById('region').value,
       phone: document.getElementById('phone').value,
       fullName: document.getElementById('fullName').value,
       civilId: document.getElementById('civilId').value,
       hasLicense: document.querySelector('input[name="hasLicense"]:checked')?.value || '',
       licenseNum: document.getElementById('licenseNum').value,
       licenseExpiry: document.getElementById('licenseExpiry').value,
-      region: document.getElementById('region').value,
       goats: document.getElementById('goats').value,
       sheep: document.getElementById('sheep').value,
       cows: document.getElementById('cows').value,
