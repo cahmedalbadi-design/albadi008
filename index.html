@@ -578,10 +578,9 @@
     if (!validateStep(2)) return;
 
     const phone = document.getElementById('phone').value.trim();
-    const wilaya = document.getElementById('wilaya').value;
 
-    if (!phone || !wilaya) {
-      alert('الرجاء إدخال رقم الهاتف واختيار الولاية');
+    if (!phone) {
+      alert('الرجاء إدخال رقم الهاتف');
       return;
     }
 
@@ -589,7 +588,7 @@
     document.getElementById('loadingOverlay').classList.add('show');
 
     try {
-      const url = GOOGLE_SCRIPT_URL + '?action=checkPhone&wilaya=' + encodeURIComponent(wilaya) + '&phone=' + encodeURIComponent(phone);
+      const url = GOOGLE_SCRIPT_URL + '?action=checkPhone&phone=' + encodeURIComponent(phone);
       const response = await fetch(url);
       const result = await response.json();
 
