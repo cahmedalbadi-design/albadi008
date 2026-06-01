@@ -14,7 +14,6 @@
     min-height: 100vh;
   }
 
-  /* Header */
   .header {
     background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
     padding: 0;
@@ -43,17 +42,6 @@
     text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
   }
 
-  .header-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .header-logo img {
-    height: 60px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-  }
-
   .header-label {
     background: rgba(255,255,255,0.2);
     color: white;
@@ -63,7 +51,6 @@
     border-top: 1px solid rgba(255,255,255,0.3);
   }
 
-  /* Project Banner */
   .project-banner {
     background: #2d6a4f;
     color: white;
@@ -74,7 +61,6 @@
     letter-spacing: 1px;
   }
 
-  /* Main Content */
   .main {
     max-width: 700px;
     margin: 20px auto;
@@ -106,7 +92,6 @@
     font-size: 12px;
   }
 
-  /* Step Indicator */
   .step-indicator {
     display: flex;
     justify-content: center;
@@ -127,7 +112,6 @@
   .step-dot.active { background: #2d6a4f; }
   .step-dot.done { background: #5cb85c; }
 
-  /* Section */
   .section {
     padding: 20px 25px;
   }
@@ -210,7 +194,6 @@
 
   .error-msg.show { display: block; }
 
-  /* Radio */
   .radio-group {
     display: flex;
     gap: 20px;
@@ -232,7 +215,6 @@
     accent-color: #2d6a4f;
   }
 
-  /* Buttons */
   .btn-row {
     display: flex;
     justify-content: space-between;
@@ -290,11 +272,9 @@
 
   .btn-clear:hover { background: #666; }
 
-  /* Steps */
   .step-page { display: none; }
   .step-page.active { display: block; }
 
-  /* Success */
   .success-screen {
     display: none;
     text-align: center;
@@ -306,7 +286,6 @@
   .success-title { font-size: 22px; font-weight: bold; color: #2d6a4f; margin-bottom: 10px; }
   .success-msg { font-size: 15px; color: #555; line-height: 1.7; }
 
-  /* Loading */
   .loading-overlay {
     display: none;
     position: fixed;
@@ -333,7 +312,6 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Oman emblem SVG placeholder */
   .emblem {
     width: 55px;
     height: 55px;
@@ -355,13 +333,11 @@
 </head>
 <body>
 
-<!-- Loading Overlay -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
-  <span>جارٍ إرسال البيانات...</span>
+  <span id="loadingText">جارٍ التحميل...</span>
 </div>
 
-<!-- Header -->
 <div class="project-banner">المشروع الوطني للتحصين</div>
 <div class="header">
   <div class="header-inner">
@@ -383,7 +359,6 @@
   <div class="header-label">المديرية العامة للثروة الزراعية والسمكية وموارد المياه بمحافظة شمال الباطنة</div>
 </div>
 
-<!-- Main -->
 <div class="main">
   <div class="form-card">
     <div class="form-title">
@@ -473,7 +448,7 @@
       </div>
       <div class="btn-row">
         <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-        <button class="btn btn-next" onclick="goStep(3)">التالي</button>
+        <button class="btn btn-next" onclick="checkPhoneAndGo()">التالي</button>
       </div>
     </div>
 
@@ -548,9 +523,6 @@
 </div>
 
 <script>
-  // =====================================================
-  // CONFIGURATION — ضع رابط Google Apps Script هنا
-  // =====================================================
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFa7UQnzSDH3xDMalSuWswXB_kZ3hoY8mqnBc17CpA_Scam1TkbOnvdpDa9hYw3sK53g/exec";
 
   const WILAYA_COLUMNS = {
@@ -561,7 +533,6 @@
     "لوى": "E",
     "شناص": "F"
   };
-  // =====================================================
 
   let currentStep = 1;
 
@@ -601,6 +572,43 @@
       console.error('Error loading regions:', e);
     }
   }
+
+  // ── التعديل الجديد: فحص رقم الهاتف قبل الانتقال من الخطوة 2 ──
+  async function checkPhoneAndGo() {
+    if (!validateStep(2)) return;
+
+    const phone = document.getElementById('phone').value.trim();
+    const wilaya = document.getElementById('wilaya').value;
+
+    if (!phone || !wilaya) {
+      alert('الرجاء إدخال رقم الهاتف واختيار الولاية');
+      return;
+    }
+
+    document.getElementById('loadingText').textContent = 'جاري التحقق من رقم الهاتف...';
+    document.getElementById('loadingOverlay').classList.add('show');
+
+    try {
+      const url = GOOGLE_SCRIPT_URL + '?action=checkPhone&wilaya=' + encodeURIComponent(wilaya) + '&phone=' + encodeURIComponent(phone);
+      const response = await fetch(url);
+      const result = await response.json();
+
+      document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+
+      if (result.exists) {
+        alert('تم تسجيل طلبك مسبقاً');
+      } else {
+        goStep(3);
+      }
+    } catch (e) {
+      document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+      console.error('Error checking phone:', e);
+      alert('حدث خطأ في التحقق من رقم الهاتف');
+    }
+  }
+  // ───────────────────────────────────────────────────────────
 
   function goStep(step) {
     if (step > currentStep && !validateStep(currentStep)) return;
@@ -701,6 +709,7 @@
       cows: document.getElementById('cows').value,
     };
 
+    document.getElementById('loadingText').textContent = 'جارٍ إرسال البيانات...';
     document.getElementById('loadingOverlay').classList.add('show');
     document.getElementById('submitBtn').disabled = true;
 
@@ -715,11 +724,13 @@
       });
 
       document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
       document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
       document.getElementById('successScreen').classList.add('show');
 
     } catch (err) {
       document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
       document.getElementById('submitBtn').disabled = false;
       alert('حدث خطأ في الإرسال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى.');
     }
