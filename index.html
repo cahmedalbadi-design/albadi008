@@ -694,18 +694,20 @@
     if (!validateStep(4)) return;
 
     const data = {
-      timestamp: new Date().toLocaleString('ar-OM'),
-      wilaya: document.getElementById('wilaya').value,
-      region: document.getElementById('region').value,
       phone: document.getElementById('phone').value,
       fullName: document.getElementById('fullName').value,
       civilId: document.getElementById('civilId').value,
-      hasLicense: document.querySelector('input[name="hasLicense"]:checked')?.value || '',
+      region: document.getElementById('region').value,
       licenseNum: document.getElementById('licenseNum').value,
       licenseExpiry: document.getElementById('licenseExpiry').value,
       goats: document.getElementById('goats').value,
       sheep: document.getElementById('sheep').value,
       cows: document.getElementById('cows').value,
+      empty1: '',
+      empty2: '',
+      empty3: '',
+      empty4: '',
+      timestamp: new Date().toLocaleString('ar-OM'),
     };
 
     document.getElementById('loadingText').textContent = 'جارٍ إرسال البيانات...';
