@@ -708,7 +708,7 @@
       empty2: '',
       empty3: '',
       empty4: '',
-      dateOnly: new Date().toLocaleDateString('ar-OM'),
+      dateOnly: new Date().toISOString().split('T')[0],
     };
 
     document.getElementById('loadingText').textContent = 'جارٍ إرسال البيانات...';
