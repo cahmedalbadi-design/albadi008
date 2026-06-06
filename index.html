@@ -62,7 +62,6 @@
     position: relative;
   }
 
-  /* ── زر التحكم في التسجيل ── */
   .admin-control {
     position: absolute;
     left: 10px;
@@ -368,7 +367,6 @@
 
   .emblem svg { width: 45px; height: 45px; }
 
-  /* ── شاشة التسجيل المغلق ── */
   .closed-overlay {
     display: none;
     text-align: center;
@@ -399,7 +397,6 @@
     line-height: 1.8;
   }
 
-  /* ── نافذة إدخال كلمة السر ── */
   .pin-modal {
     display: none;
     position: fixed;
@@ -470,7 +467,6 @@
   <span id="loadingText">جارٍ التحميل...</span>
 </div>
 
-<!-- نافذة إدخال كلمة السر -->
 <div class="pin-modal" id="pinModal">
   <div class="pin-box">
     <h3>🔐 إدارة التسجيل</h3>
@@ -514,7 +510,6 @@
 <div class="main">
   <div class="form-card">
 
-    <!-- شاشة التسجيل المغلق -->
     <div class="closed-overlay" id="closedOverlay">
       <div class="closed-icon">🔒</div>
       <div class="closed-title">التسجيل مغلق حالياً</div>
@@ -524,7 +519,6 @@
       </div>
     </div>
 
-    <!-- محتوى النموذج العادي -->
     <div id="formContent">
       <div class="form-title">
         <h1>تسجل طلبات التحصين بمحافظة شمال الباطنة</h1>
@@ -538,7 +532,6 @@
         <div class="step-dot" id="dot4"></div>
       </div>
 
-      <!-- STEP 1 -->
       <div class="step-page active" id="step1">
         <div class="section">
           <div class="section-header info">اختيار الولاية والمنطقة</div>
@@ -569,7 +562,6 @@
         </div>
       </div>
 
-      <!-- STEP 2 -->
       <div class="step-page" id="step2">
         <div class="section">
           <div class="field-group">
@@ -610,7 +602,6 @@
         </div>
       </div>
 
-      <!-- STEP 3 -->
       <div class="step-page" id="step3">
         <div class="section">
           <div class="section-header info">يرجى استكمال البيانات أثناء قبل المتابعة.</div>
@@ -634,7 +625,6 @@
         </div>
       </div>
 
-      <!-- STEP 4 -->
       <div class="step-page" id="step4">
         <div class="section">
           <div class="section-header" style="background:#555;color:white;">تأمل منكم استكمال البيانات المطلوبة لإتمام الإجراء.</div>
@@ -661,7 +651,6 @@
         </div>
       </div>
 
-      <!-- SUCCESS -->
       <div class="success-screen" id="successScreen">
         <div class="success-icon">✅</div>
         <div class="success-title">تم إرسال طلبك بنجاح!</div>
@@ -677,7 +666,6 @@
 
 <script>
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFa7UQnzSDH3xDMalSuWswXB_kZ3hoY8mqnBc17CpA_Scam1TkbOnvdpDa9hYw3sK53g/exec";
-  const ADMIN_PIN = "2024"; // ← غيّر كلمة السر من هنا
 
   const WILAYA_COLUMNS = {
     "السويق": "A",
@@ -691,10 +679,18 @@
   let currentStep = 1;
   let skippedLicense = false;
 
-  /* ── نظام التحكم في التسجيل ── */
-  function initRegistrationControl() {
-    const isClosed = localStorage.getItem('registrationClosed') === 'true';
-    updateRegistrationUI(isClosed);
+  /* ── نظام التحكم في التسجيل (مزامنة عبر GAS) ── */
+  async function initRegistrationControl() {
+    try {
+      const url = GOOGLE_SCRIPT_URL + '?action=getRegistrationStatus';
+      const response = await fetch(url);
+      const result = await response.json();
+      updateRegistrationUI(result.status === 'CLOSED');
+    } catch (e) {
+      console.error('Error loading status:', e);
+      // افتراضياً مفتوح إذا فشل الاتصال
+      updateRegistrationUI(false);
+    }
   }
 
   function openPinModal() {
@@ -708,32 +704,45 @@
     document.getElementById('pinModal').classList.remove('show');
   }
 
-  function verifyPin() {
-    const input = document.getElementById('pinInput').value.trim();
-    if (input === ADMIN_PIN) {
-      closePinModal();
-      toggleRegistration();
-    } else {
+  async function verifyPin() {
+    const pin = document.getElementById('pinInput').value.trim();
+    if (!pin) {
       document.getElementById('pinError').classList.add('show');
-      document.getElementById('pinInput').value = '';
-      document.getElementById('pinInput').focus();
+      return;
+    }
+
+    document.getElementById('loadingText').textContent = 'جاري التحقق...';
+    document.getElementById('loadingOverlay').classList.add('show');
+
+    try {
+      const url = GOOGLE_SCRIPT_URL + '?action=toggleRegistration&pin=' + encodeURIComponent(pin);
+      const response = await fetch(url);
+      const result = await response.json();
+
+      document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+
+      if (result.success) {
+        closePinModal();
+        updateRegistrationUI(result.status === 'CLOSED');
+      } else {
+        document.getElementById('pinError').classList.add('show');
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinInput').focus();
+      }
+    } catch (e) {
+      document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+      alert('حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.');
     }
   }
 
-  // إغلاق النافذة بزر Escape
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closePinModal();
     if (e.key === 'Enter' && document.getElementById('pinModal').classList.contains('show')) {
       verifyPin();
     }
   });
-
-  function toggleRegistration() {
-    const isCurrentlyClosed = localStorage.getItem('registrationClosed') === 'true';
-    const newState = !isCurrentlyClosed;
-    localStorage.setItem('registrationClosed', newState);
-    updateRegistrationUI(newState);
-  }
 
   function updateRegistrationUI(isClosed) {
     const btn = document.getElementById('toggleBtn');
