@@ -574,39 +574,46 @@
   }
 
   // ── التعديل الجديد: فحص رقم الهاتف قبل الانتقال من الخطوة 2 ──
-  async function checkPhoneAndGo() {
-    if (!validateStep(2)) return;
+async function checkPhoneAndGo() {
+  if (!validateStep(2)) return;
 
-    const phone = document.getElementById('phone').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
 
-    if (!phone) {
-      alert('الرجاء إدخال رقم الهاتف');
-      return;
-    }
+  if (!phone) {
+    alert('الرجاء إدخال رقم الهاتف');
+    return;
+  }
 
-    document.getElementById('loadingText').textContent = 'جاري التحقق من رقم الهاتف...';
-    document.getElementById('loadingOverlay').classList.add('show');
+  document.getElementById('loadingText').textContent = 'جاري التحقق من رقم الهاتف...';
+  document.getElementById('loadingOverlay').classList.add('show');
 
-    try {
-      const url = GOOGLE_SCRIPT_URL + '?action=checkPhone&phone=' + encodeURIComponent(phone);
-      const response = await fetch(url);
-      const result = await response.json();
+  try {
+    const url = GOOGLE_SCRIPT_URL + '?action=checkPhone&phone=' + encodeURIComponent(phone);
+    const response = await fetch(url);
+    const result = await response.json();
 
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+    document.getElementById('loadingOverlay').classList.remove('show');
+    document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
 
-      if (result.exists) {
-        alert('تم تسجيل طلبك مسبقاً');
+    if (result.exists) {
+      alert('تم تسجيل طلبك مسبقاً');
+    } else {
+      // ── التعديل الجديد: إذا لا يملك حيازة → إرسال مباشر ──
+      if (hasLicense === 'لا') {
+        submitForm(true); // true = إرسال سريع بدون حيازة
       } else {
         goStep(3);
       }
-    } catch (e) {
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-      console.error('Error checking phone:', e);
-      alert('حدث خطأ في التحقق من رقم الهاتف');
+      // ───────────────────────────────────────────────────
     }
+  } catch (e) {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+    console.error('Error checking phone:', e);
+    alert('حدث خطأ في التحقق من رقم الهاتف');
   }
+}
   // ───────────────────────────────────────────────────────────
 
   function goStep(step) {
@@ -690,53 +697,53 @@
     window.scrollTo(0, 0);
   }
 
-  async function submitForm() {
-    if (!validateStep(4)) return;
+async function submitForm(skipLicense = false) {
+  if (!skipLicense && !validateStep(4)) return;
 
-    const data = {
-     wilaya: document.getElementById('wilaya').value,
-      phone: document.getElementById('phone').value,
-      fullName: document.getElementById('fullName').value,
-      civilId: document.getElementById('civilId').value,
-      region: document.getElementById('region').value,
-      licenseNum: document.getElementById('licenseNum').value,
-      licenseExpiry: document.getElementById('licenseExpiry').value,
-      goats: document.getElementById('goats').value,
-      sheep: document.getElementById('sheep').value,
-      cows: document.getElementById('cows').value,
-      empty1: '',
-      empty2: '',
-      empty3: '',
-      empty4: '',
-      dateOnly: new Date().toISOString().split('T')[0],
-    };
+  const data = {
+    wilaya: document.getElementById('wilaya').value,
+    phone: document.getElementById('phone').value,
+    fullName: document.getElementById('fullName').value,
+    civilId: document.getElementById('civilId').value,
+    region: document.getElementById('region').value,
+    licenseNum: skipLicense ? '' : document.getElementById('licenseNum').value,
+    licenseExpiry: skipLicense ? '' : document.getElementById('licenseExpiry').value,
+    goats: document.getElementById('goats').value,
+    sheep: document.getElementById('sheep').value,
+    cows: document.getElementById('cows').value,
+    empty1: '',
+    empty2: '',
+    empty3: '',
+    empty4: '',
+    dateOnly: new Date().toISOString().split('T')[0],
+  };
 
-    document.getElementById('loadingText').textContent = 'جارٍ إرسال البيانات...';
-    document.getElementById('loadingOverlay').classList.add('show');
-    document.getElementById('submitBtn').disabled = true;
+  document.getElementById('loadingText').textContent = 'جارٍ إرسال البيانات...';
+  document.getElementById('loadingOverlay').classList.add('show');
+  document.getElementById('submitBtn').disabled = true;
 
-    try {
-      const formData = new FormData();
-      Object.keys(data).forEach(key => formData.append(key, data[key]));
+  try {
+    const formData = new FormData();
+    Object.keys(data).forEach(key => formData.append(key, data[key]));
 
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: formData
-      });
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
+    });
 
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-      document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
-      document.getElementById('successScreen').classList.add('show');
+    document.getElementById('loadingOverlay').classList.remove('show');
+    document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+    document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
+    document.getElementById('successScreen').classList.add('show');
 
-    } catch (err) {
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-      document.getElementById('submitBtn').disabled = false;
-      alert('حدث خطأ في الإرسال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى.');
-    }
+  } catch (err) {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+    document.getElementById('submitBtn').disabled = false;
+    alert('حدث خطأ في الإرسال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى.');
   }
+}
 </script>
 </body>
 </html>
