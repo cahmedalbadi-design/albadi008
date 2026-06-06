@@ -8,12 +8,10 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-    background: #f0f0f0;
-    direction: rtl;
-    min-height: 100vh;
+    background: #f0f0f0; direction: rtl; min-height: 100vh;
   }
 
-  /* ===== شاشة التحميل الأولي ===== */
+  /* شاشة التحميل الأولي */
   #initScreen {
     position: fixed; inset: 0;
     background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
@@ -28,7 +26,7 @@
   }
   #initScreen span { font-size: 15px; }
 
-  /* ===== شاشة النموذج مغلق ===== */
+  /* شاشة النموذج مغلق */
   #closedScreen {
     display: none; position: fixed; inset: 0;
     background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
@@ -44,22 +42,22 @@
   .closed-title { font-size: 20px; font-weight: bold; color: #c0392b; margin-bottom: 10px; }
   .closed-msg { font-size: 14px; color: #555; line-height: 1.8; }
 
-  /* ===== زر المالك — فوق كل شيء ===== */
+  /* زر المالك — فوق كل شيء */
   #ownerBtn {
     position: fixed; bottom: 18px; left: 18px;
     width: 42px; height: 42px;
     background: rgba(26,92,56,0.85);
     border: 2px solid rgba(255,255,255,0.4);
     border-radius: 50%; cursor: pointer;
-    z-index: 99999;           /* فوق شاشة الإغلاق وكل شيء */
-    font-size: 18px;
-    display: flex; align-items: center; justify-content: center;
+    z-index: 99999;
+    font-size: 18px; display: flex;
+    align-items: center; justify-content: center;
     transition: background 0.2s; color: white;
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   }
   #ownerBtn:hover { background: rgba(26,92,56,1); }
 
-  /* ===== Admin Overlay ===== */
+  /* Admin Overlay */
   #adminOverlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.65);
@@ -67,18 +65,19 @@
   }
   #adminOverlay.show { display: flex; }
 
-  /* شاشة تسجيل دخول المالك */
+  /* بطاقة تسجيل الدخول */
   #adminLoginBox {
     background: white; border-radius: 14px;
     padding: 38px 32px; width: 340px; max-width: 92vw;
     text-align: center; box-shadow: 0 10px 35px rgba(0,0,0,0.4);
   }
   .admin-login-icon { font-size: 48px; margin-bottom: 10px; }
-  .admin-login-title { font-size: 17px; font-weight: bold; color: #1a5c38; margin-bottom: 18px; }
+  .admin-login-title { font-size: 17px; font-weight: bold; color: #1a5c38; margin-bottom: 6px; }
+  .admin-login-sub { font-size: 12px; color: #999; margin-bottom: 18px; }
   .admin-input {
-    width: 100%; padding: 11px 14px;
+    width: 100%; padding: 12px 14px;
     border: 2px solid #ddd; border-radius: 7px;
-    font-size: 18px; text-align: center;
+    font-size: 20px; text-align: center;
     letter-spacing: 6px; font-family: monospace;
     direction: ltr; margin-bottom: 12px;
     transition: border-color 0.2s;
@@ -87,15 +86,17 @@
   .admin-input.shake { animation: shake 0.4s ease; border-color: #e74c3c; }
   @keyframes shake {
     0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)}
-    40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)}
+    40%{transform:translateX(8px)}  60%{transform:translateX(-6px)} 80%{transform:translateX(6px)}
   }
-  .admin-err { color: #e74c3c; font-size: 12px; min-height: 18px; margin-bottom: 10px; }
+  .admin-err { color: #e74c3c; font-size: 13px; min-height: 20px; margin-bottom: 10px; }
   .btn-admin-login {
     width: 100%; padding: 12px; background: #1a5c38; color: white;
     border: none; border-radius: 7px; font-size: 15px; font-weight: bold;
     cursor: pointer; font-family: inherit; margin-bottom: 10px;
+    transition: background 0.2s;
   }
-  .btn-admin-login:hover { background: #134a2c; }
+  .btn-admin-login:hover:not(:disabled) { background: #134a2c; }
+  .btn-admin-login:disabled { background: #aaa; cursor: default; }
   .btn-cancel-login {
     width: 100%; padding: 10px; background: #f0f0f0; color: #555;
     border: none; border-radius: 7px; font-size: 14px;
@@ -114,20 +115,17 @@
     margin-bottom: 22px; border-bottom: 2px solid #f0f0f0; padding-bottom: 14px;
   }
   .panel-title { font-size: 17px; font-weight: bold; color: #1a5c38; }
-  .btn-close-panel {
-    background: none; border: none; font-size: 22px;
-    cursor: pointer; color: #888;
-  }
+  .btn-close-panel { background: none; border: none; font-size: 22px; cursor: pointer; color: #888; }
   .btn-close-panel:hover { color: #333; }
 
   .status-box {
     border-radius: 10px; padding: 16px 18px;
     margin-bottom: 20px; display: flex; align-items: center; gap: 14px;
   }
-  .status-box.open-status  { background: #e8f5e9; border: 2px solid #4caf50; }
-  .status-box.closed-status{ background: #fdecea; border: 2px solid #e74c3c; }
+  .status-box.open-status   { background: #e8f5e9; border: 2px solid #4caf50; }
+  .status-box.closed-status { background: #fdecea; border: 2px solid #e74c3c; }
   .status-icon-big { font-size: 30px; }
-  .status-label { font-size: 12px; color: #777; margin-bottom: 2px; }
+  .status-label { font-size: 12px; color: #777; margin-bottom: 3px; }
   .status-value { font-size: 15px; font-weight: bold; }
   .status-box.open-status   .status-value { color: #2e7d32; }
   .status-box.closed-status .status-value { color: #c0392b; }
@@ -147,21 +145,20 @@
     cursor: pointer; font-family: inherit; transition: opacity 0.2s;
   }
   .btn-toggle-close:hover:not(:disabled) { background: #a93226; }
-
   .btn-toggle-open:disabled,
-  .btn-toggle-close:disabled { opacity: 0.38; cursor: default; }
+  .btn-toggle-close:disabled { opacity: 0.35; cursor: default; }
 
-  .panel-loading { text-align:center; color:#888; font-size:13px; padding:8px 0; min-height:22px; }
+  .panel-loading { text-align:center; color:#888; font-size:13px; padding:6px 0; min-height:22px; }
 
   .btn-logout-admin {
-    width: 100%; padding: 10px; background: #f0f0f0; color: #555;
-    border: none; border-radius: 7px; font-size: 13px;
-    cursor: pointer; font-family: inherit; margin-top: 8px;
+    width: 100%; padding: 10px; background: #f5f5f5; color: #666;
+    border: 1px solid #ddd; border-radius: 7px; font-size: 13px;
+    cursor: pointer; font-family: inherit; margin-top: 10px;
   }
-  .btn-logout-admin:hover { background: #e0e0e0; }
-  .panel-note { font-size: 11px; color: #aaa; text-align: center; margin-top: 12px; line-height: 1.7; }
+  .btn-logout-admin:hover { background: #e8e8e8; }
+  .panel-note { font-size: 11px; color: #bbb; text-align: center; margin-top: 12px; line-height: 1.7; }
 
-  /* ===== Header / Form ===== */
+  /* ===== الهيدر والنموذج ===== */
   .header {
     background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
     padding: 0; overflow: hidden;
@@ -276,13 +273,13 @@
 </head>
 <body>
 
-<!-- ===== شاشة التحميل الأولي ===== -->
+<!-- شاشة التحميل الأولي -->
 <div id="initScreen">
   <div class="spinner"></div>
   <span>جارٍ التحقق من حالة النموذج...</span>
 </div>
 
-<!-- ===== شاشة النموذج مغلق ===== -->
+<!-- شاشة النموذج مغلق -->
 <div id="closedScreen">
   <div class="closed-card">
     <div class="closed-icon">🔴</div>
@@ -294,22 +291,23 @@
   </div>
 </div>
 
-<!-- ===== زر المالك — z-index أعلى من كل شيء ===== -->
-<button id="ownerBtn" onclick="openAdminOverlay()" title="إعدادات المالك">⚙</button>
+<!-- زر المالك المخفي — z-index أعلى من كل شيء -->
+<button id="ownerBtn" onclick="openAdminOverlay()" title="إعدادات">⚙</button>
 
-<!-- ===== Admin Overlay ===== -->
+<!-- Admin Overlay -->
 <div id="adminOverlay">
 
-  <!-- تسجيل الدخول -->
+  <!-- شاشة تسجيل الدخول -->
   <div id="adminLoginBox">
     <div class="admin-login-icon">🛡️</div>
     <div class="admin-login-title">لوحة تحكم المالك</div>
+    <div class="admin-login-sub">يتم التحقق من كلمة المرور عبر السيرفر</div>
     <input class="admin-input" type="password" id="adminPwd"
       placeholder="● ● ● ●" maxlength="30"
       onkeydown="if(event.key==='Enter') adminLogin()"
       autocomplete="off">
     <div class="admin-err" id="adminErr"></div>
-    <button class="btn-admin-login" onclick="adminLogin()">دخول</button>
+    <button class="btn-admin-login" id="loginBtn" onclick="adminLogin()">دخول</button>
     <button class="btn-cancel-login" onclick="closeAdminOverlay()">إلغاء</button>
   </div>
 
@@ -323,7 +321,7 @@
     <div id="statusBox" class="status-box open-status">
       <div class="status-icon-big" id="statusIcon">🟢</div>
       <div>
-        <div class="status-label">حالة النموذج الحالية (من السيرفر)</div>
+        <div class="status-label">حالة النموذج الحالية</div>
         <div class="status-value" id="statusValue">جارٍ التحميل...</div>
       </div>
     </div>
@@ -331,28 +329,28 @@
     <div class="panel-loading" id="panelLoading"></div>
 
     <div class="toggle-section">
-      <span class="toggle-label">تغيير حالة النموذج على جميع الأجهزة:</span>
+      <span class="toggle-label">تغيير الحالة على جميع الأجهزة:</span>
       <button class="btn-toggle-open"  id="btnOpen"  onclick="toggleStatus('OPEN')">🟢 فتح النموذج للجميع</button>
       <br><br>
       <button class="btn-toggle-close" id="btnClose" onclick="toggleStatus('CLOSED')">🔴 إغلاق النموذج</button>
     </div>
 
-    <button class="btn-logout-admin" onclick="adminLogout()">تسجيل الخروج</button>
+    <button class="btn-logout-admin" onclick="adminLogout()">🚪 تسجيل الخروج</button>
     <div class="panel-note">
-      التغيير يُطبَّق فوراً على جميع الأجهزة والمستخدمين.<br>
-      الحالة محفوظة في السيرفر (Google Apps Script).
+      كلمة المرور محفوظة في السيرفر فقط<br>
+      ولا يمكن لأحد رؤيتها من المتصفح
     </div>
   </div>
 
 </div>
 
-<!-- ===== Loading overlay ===== -->
+<!-- Loading overlay -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <span id="loadingText">جارٍ التحميل...</span>
 </div>
 
-<!-- ===== المحتوى الرئيسي ===== -->
+<!-- المحتوى الرئيسي -->
 <div class="project-banner">المشروع الوطني للتحصين</div>
 <div class="header">
   <div class="header-inner">
@@ -417,7 +415,7 @@
       <div class="section">
         <div class="field-group">
           <label class="field-label">رقم الهاتف <span class="req">*</span></label>
-          <div class="field-hint">يجب إدخال رقم هاتف صحيح ليتمكن فريق التحصين من التواصل معك. في حال إدخال رقم غير صحيح، سيتم إلغاء الطلب.</div>
+          <div class="field-hint">يجب إدخال رقم هاتف صحيح ليتمكن فريق التحصين من التواصل معك. في حال إدخال رقم غير صحيح سيتم إلغاء الطلب.</div>
           <input type="tel" id="phone" placeholder="إدخالك" maxlength="12">
           <div class="error-msg" id="phone-err">الرجاء إدخال رقم هاتف صحيح</div>
         </div>
@@ -515,11 +513,10 @@
 </div>
 
 <script>
-  // ============================================================
-  //  الإعدادات
-  // ============================================================
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFa7UQnzSDH3xDMalSuWswXB_kZ3hoY8mqnBc17CpA_Scam1TkbOnvdpDa9hYw3sK53g/exec";
-  const ADMIN_PASSWORD    = "admin2025";   // كلمة مرور لوحة التحكم (محلية)
+  // ══════════════════════════════════════════════════
+  //  الإعداد — رابط السيرفر فقط، لا توجد كلمات مرور
+  // ══════════════════════════════════════════════════
+  const GAS = "https://script.google.com/macros/s/AKfycbzFa7UQnzSDH3xDMalSuWswXB_kZ3hoY8mqnBc17CpA_Scam1TkbOnvdpDa9hYw3sK53g/exec";
 
   const WILAYA_COLUMNS = {
     "السويق":"A","الخابورة":"B","صحم":"C",
@@ -528,46 +525,45 @@
 
   let currentStep    = 1;
   let skippedLicense = false;
-  let adminLoggedIn  = false;
-  let serverStatus   = 'OPEN';   // آخر حالة مسحوبة من السيرفر
+  let serverStatus   = 'OPEN';
+  // نحفظ PIN فقط في الذاكرة بعد تسجيل الدخول — ولا يظهر في الكود أبداً
+  let sessionPin     = null;
 
-  // ============================================================
-  //  جلب حالة النموذج من السيرفر عند فتح الصفحة
-  // ============================================================
+  // ══════════════════════════════════════════════════
+  //  تهيئة الصفحة — جلب الحالة من السيرفر
+  // ══════════════════════════════════════════════════
   async function initPage() {
     try {
-      const res    = await fetch(GOOGLE_SCRIPT_URL + '?action=getRegistrationStatus');
-      const data   = await res.json();
+      const res  = await fetch(GAS + '?action=getRegistrationStatus');
+      const data = await res.json();
       serverStatus = data.status || 'OPEN';
     } catch(e) {
-      serverStatus = 'OPEN'; // عند فشل الاتصال نفتح بشكل افتراضي
+      serverStatus = 'OPEN';
     }
     applyStatus(serverStatus);
     document.getElementById('initScreen').style.display = 'none';
   }
 
-  function applyStatus(status) {
-    serverStatus = status;
-    if (status === 'CLOSED') {
-      document.getElementById('closedScreen').classList.add('show');
-    } else {
-      document.getElementById('closedScreen').classList.remove('show');
-    }
+  function applyStatus(s) {
+    serverStatus = s;
+    document.getElementById('closedScreen').classList.toggle('show', s === 'CLOSED');
   }
 
-  // ============================================================
-  //  Admin — فتح الـ overlay
-  // ============================================================
+  // ══════════════════════════════════════════════════
+  //  Admin overlay
+  // ══════════════════════════════════════════════════
   function openAdminOverlay() {
     document.getElementById('adminOverlay').classList.add('show');
-    if (!adminLoggedIn) {
+    if (!sessionPin) {
+      // أظهر شاشة الدخول
       document.getElementById('adminLoginBox').style.display = 'block';
       document.getElementById('adminPanel').style.display    = 'none';
       document.getElementById('adminPwd').value = '';
       document.getElementById('adminErr').textContent = '';
+      document.getElementById('loginBtn').disabled = false;
       setTimeout(() => document.getElementById('adminPwd').focus(), 120);
     } else {
-      showAdminPanel();
+      showAdminPanel(serverStatus);
     }
   }
 
@@ -575,45 +571,48 @@
     document.getElementById('adminOverlay').classList.remove('show');
   }
 
-  function adminLogin() {
-    const pwd = document.getElementById('adminPwd').value;
-    const inp = document.getElementById('adminPwd');
-    const err = document.getElementById('adminErr');
-    if (pwd === ADMIN_PASSWORD) {
-      adminLoggedIn = true;
-      showAdminPanel();
-    } else {
-      err.textContent = 'كلمة المرور غير صحيحة';
-      inp.value = '';
-      inp.classList.add('shake');
-      setTimeout(() => inp.classList.remove('shake'), 500);
-      inp.focus();
+  // ── التحقق من كلمة المرور عبر السيرفر ──
+  async function adminLogin() {
+    const pwd    = document.getElementById('adminPwd').value.trim();
+    const inp    = document.getElementById('adminPwd');
+    const err    = document.getElementById('adminErr');
+    const btn    = document.getElementById('loginBtn');
+
+    if (!pwd) { err.textContent = 'الرجاء إدخال كلمة المرور'; return; }
+
+    btn.disabled = true;
+    btn.textContent = '⏳ جارٍ التحقق...';
+    err.textContent = '';
+
+    try {
+      const res  = await fetch(GAS + '?action=adminLogin&pin=' + encodeURIComponent(pwd));
+      const data = await res.json();
+
+      if (data.success) {
+        // احفظ PIN في الذاكرة فقط (session) — لا يُكتب في الكود
+        sessionPin = pwd;
+        showAdminPanel(data.status);
+      } else {
+        err.textContent = '❌ كلمة المرور غير صحيحة';
+        inp.value = '';
+        inp.classList.add('shake');
+        setTimeout(() => inp.classList.remove('shake'), 500);
+        inp.focus();
+        btn.disabled = false;
+        btn.textContent = 'دخول';
+      }
+    } catch(e) {
+      err.textContent = '⚠️ خطأ في الاتصال، حاول مجدداً';
+      btn.disabled = false;
+      btn.textContent = 'دخول';
     }
   }
 
-  async function showAdminPanel() {
+  function showAdminPanel(status) {
     document.getElementById('adminLoginBox').style.display = 'none';
     document.getElementById('adminPanel').style.display    = 'block';
-    // اجلب آخر حالة من السيرفر عند فتح اللوحة
-    await refreshPanelStatus();
-  }
-
-  async function refreshPanelStatus() {
-    setPanelLoading(true);
-    try {
-      const res  = await fetch(GOOGLE_SCRIPT_URL + '?action=getRegistrationStatus');
-      const data = await res.json();
-      serverStatus = data.status || 'OPEN';
-    } catch(e) { /* استخدم آخر حالة محفوظة */ }
+    serverStatus = status || serverStatus;
     updatePanelUI();
-    setPanelLoading(false);
-  }
-
-  function setPanelLoading(on) {
-    const el = document.getElementById('panelLoading');
-    el.textContent = on ? '⏳ جارٍ التحديث...' : '';
-    document.getElementById('btnOpen').disabled  = on;
-    document.getElementById('btnClose').disabled = on;
   }
 
   function updatePanelUI() {
@@ -628,30 +627,25 @@
     document.getElementById('btnClose').disabled = !isOpen;
   }
 
-  // ============================================================
-  //  تغيير الحالة عبر السيرفر (toggleRegistration + PIN)
-  // ============================================================
-  async function toggleStatus(targetStatus) {
-    if (serverStatus === targetStatus) return;
+  function setPanelLoading(on) {
+    document.getElementById('panelLoading').textContent = on ? '⏳ جارٍ التحديث...' : '';
+    document.getElementById('btnOpen').disabled  = on;
+    document.getElementById('btnClose').disabled = on;
+  }
 
-    // PIN المالك من Apps Script هو '2024' (setupAdminPin)
-    // نستخدمه مباشرة هنا — يمكن تغييره ليطابق ما ضبطته في السكريبت
-    const SCRIPT_PIN = "2024";
-
+  // ── تغيير الحالة — PIN يُرسل من الذاكرة وليس من الكود ──
+  async function toggleStatus(target) {
+    if (serverStatus === target || !sessionPin) return;
     setPanelLoading(true);
     try {
-      const url = GOOGLE_SCRIPT_URL
-        + '?action=toggleRegistration'
-        + '&pin=' + encodeURIComponent(SCRIPT_PIN);
-      const res  = await fetch(url);
+      const res  = await fetch(GAS + '?action=toggleRegistration&pin=' + encodeURIComponent(sessionPin));
       const data = await res.json();
-
       if (data.success) {
         serverStatus = data.status;
         applyStatus(serverStatus);
         updatePanelUI();
       } else {
-        alert('خطأ: ' + (data.error || 'فشل تغيير الحالة'));
+        alert('فشل تغيير الحالة: ' + (data.error || 'خطأ غير معروف'));
       }
     } catch(e) {
       alert('خطأ في الاتصال بالسيرفر');
@@ -660,34 +654,34 @@
   }
 
   function adminLogout() {
-    adminLoggedIn = false;
+    sessionPin = null;
     closeAdminOverlay();
   }
 
-  // ============================================================
+  // ══════════════════════════════════════════════════
   //  منطق النموذج
-  // ============================================================
+  // ══════════════════════════════════════════════════
   async function onWilayaChange() {
     const wilaya = document.getElementById('wilaya').value;
-    const regionGroup  = document.getElementById('regionGroup');
-    const regionSelect = document.getElementById('region');
-    if (!wilaya) { regionGroup.style.display='none'; regionSelect.innerHTML='<option value="">اختيار</option>'; return; }
+    const rg = document.getElementById('regionGroup');
+    const rs = document.getElementById('region');
+    if (!wilaya) { rg.style.display='none'; rs.innerHTML='<option value="">اختيار</option>'; return; }
     document.getElementById('wilaya-err').classList.remove('show');
-    regionSelect.innerHTML = '<option value="">جاري التحميل...</option>';
-    regionGroup.style.display = 'block';
+    rs.innerHTML = '<option value="">جاري التحميل...</option>';
+    rg.style.display = 'block';
     try {
       const col = WILAYA_COLUMNS[wilaya];
-      const res = await fetch(GOOGLE_SCRIPT_URL+'?action=getRegions&column='+encodeURIComponent(col));
+      const res = await fetch(GAS+'?action=getRegions&column='+encodeURIComponent(col));
       const regions = await res.json();
-      regionSelect.innerHTML = '<option value="">اختيار</option>';
+      rs.innerHTML = '<option value="">اختيار</option>';
       regions.forEach(r => {
         if (r && r.toString().trim()) {
           const o = document.createElement('option');
           o.value = o.textContent = r.toString().trim();
-          regionSelect.appendChild(o);
+          rs.appendChild(o);
         }
       });
-    } catch(e) { regionSelect.innerHTML='<option value="">خطأ في التحميل</option>'; }
+    } catch(e) { rs.innerHTML='<option value="">خطأ في التحميل</option>'; }
   }
 
   async function checkPhoneAndGo() {
@@ -696,7 +690,7 @@
     const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
     showLoading('جاري التحقق من رقم الهاتف...');
     try {
-      const res    = await fetch(GOOGLE_SCRIPT_URL+'?action=checkPhone&phone='+encodeURIComponent(phone));
+      const res    = await fetch(GAS+'?action=checkPhone&phone='+encodeURIComponent(phone));
       const result = await res.json();
       hideLoading();
       if (result.exists) { alert('تم تسجيل طلبك مسبقاً'); }
@@ -748,10 +742,10 @@
     return valid;
   }
 
-  function checkField(id, condition) {
+  function checkField(id, cond) {
     const el=document.getElementById(id), err=document.getElementById(id+'-err');
     if (!el) return true;
-    if (!condition(el.value)) { el.classList.add('error'); if(err) err.classList.add('show'); return false; }
+    if (!cond(el.value)) { el.classList.add('error'); if(err) err.classList.add('show'); return false; }
     el.classList.remove('error'); if(err) err.classList.remove('show'); return true;
   }
 
@@ -800,7 +794,7 @@
     try {
       const formData = new FormData();
       Object.keys(data).forEach(k=>formData.append(k,data[k]));
-      await fetch(GOOGLE_SCRIPT_URL,{method:'POST',mode:'no-cors',body:formData});
+      await fetch(GAS,{method:'POST',mode:'no-cors',body:formData});
       hideLoading();
       document.querySelectorAll('.step-page').forEach(p=>p.classList.remove('active'));
       document.getElementById('successScreen').classList.add('show');
@@ -812,17 +806,15 @@
   }
 
   function showLoading(msg) {
-    document.getElementById('loadingText').textContent = msg || 'جارٍ التحميل...';
+    document.getElementById('loadingText').textContent = msg||'جارٍ التحميل...';
     document.getElementById('loadingOverlay').classList.add('show');
   }
   function hideLoading() {
     document.getElementById('loadingOverlay').classList.remove('show');
-    document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+    document.getElementById('loadingText').textContent='جارٍ التحميل...';
   }
 
-  // ============================================================
-  //  تهيئة الصفحة
-  // ============================================================
+  // ══════════════════════════════════════════════════
   initPage();
 </script>
 </body>
