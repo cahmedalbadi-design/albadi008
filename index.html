@@ -13,65 +13,74 @@
     min-height: 100vh;
   }
 
+  /* ===== شاشة التحميل الأولي ===== */
+  #initScreen {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10000; flex-direction: column; gap: 18px; color: white;
+  }
+  #initScreen .spinner {
+    width: 52px; height: 52px;
+    border: 5px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  #initScreen span { font-size: 15px; }
+
   /* ===== شاشة النموذج مغلق ===== */
   #closedScreen {
-    display: none;
-    position: fixed;
-    inset: 0;
+    display: none; position: fixed; inset: 0;
     background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
-    align-items: center;
-    justify-content: center;
-    z-index: 8000;
+    align-items: center; justify-content: center; z-index: 8000;
   }
   #closedScreen.show { display: flex; }
   .closed-card {
-    background: white;
-    border-radius: 14px;
-    padding: 45px 35px;
-    width: 360px;
-    max-width: 92vw;
-    text-align: center;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+    background: white; border-radius: 14px;
+    padding: 45px 35px; width: 360px; max-width: 92vw;
+    text-align: center; box-shadow: 0 10px 35px rgba(0,0,0,0.35);
   }
   .closed-icon { font-size: 58px; margin-bottom: 14px; }
   .closed-title { font-size: 20px; font-weight: bold; color: #c0392b; margin-bottom: 10px; }
   .closed-msg { font-size: 14px; color: #555; line-height: 1.8; }
 
-  /* ===== لوحة المالك overlay ===== */
+  /* ===== زر المالك — فوق كل شيء ===== */
+  #ownerBtn {
+    position: fixed; bottom: 18px; left: 18px;
+    width: 42px; height: 42px;
+    background: rgba(26,92,56,0.85);
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 50%; cursor: pointer;
+    z-index: 99999;           /* فوق شاشة الإغلاق وكل شيء */
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; color: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  #ownerBtn:hover { background: rgba(26,92,56,1); }
+
+  /* ===== Admin Overlay ===== */
   #adminOverlay {
-    display: none;
-    position: fixed;
-    inset: 0;
+    display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.65);
-    z-index: 9000;
-    align-items: center;
-    justify-content: center;
+    z-index: 99998; align-items: center; justify-content: center;
   }
   #adminOverlay.show { display: flex; }
 
-  /* ===== شاشة تسجيل دخول المالك ===== */
+  /* شاشة تسجيل دخول المالك */
   #adminLoginBox {
-    background: white;
-    border-radius: 14px;
-    padding: 38px 32px;
-    width: 340px;
-    max-width: 92vw;
-    text-align: center;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.4);
+    background: white; border-radius: 14px;
+    padding: 38px 32px; width: 340px; max-width: 92vw;
+    text-align: center; box-shadow: 0 10px 35px rgba(0,0,0,0.4);
   }
   .admin-login-icon { font-size: 48px; margin-bottom: 10px; }
   .admin-login-title { font-size: 17px; font-weight: bold; color: #1a5c38; margin-bottom: 18px; }
   .admin-input {
-    width: 100%;
-    padding: 11px 14px;
-    border: 2px solid #ddd;
-    border-radius: 7px;
-    font-size: 16px;
-    text-align: center;
-    letter-spacing: 4px;
-    font-family: monospace;
-    direction: ltr;
-    margin-bottom: 12px;
+    width: 100%; padding: 11px 14px;
+    border: 2px solid #ddd; border-radius: 7px;
+    font-size: 18px; text-align: center;
+    letter-spacing: 6px; font-family: monospace;
+    direction: ltr; margin-bottom: 12px;
     transition: border-color 0.2s;
   }
   .admin-input:focus { outline: none; border-color: #2d6a4f; }
@@ -82,167 +91,108 @@
   }
   .admin-err { color: #e74c3c; font-size: 12px; min-height: 18px; margin-bottom: 10px; }
   .btn-admin-login {
-    width: 100%; padding: 12px;
-    background: #1a5c38; color: white;
-    border: none; border-radius: 7px;
-    font-size: 15px; font-weight: bold;
-    cursor: pointer; font-family: inherit;
-    margin-bottom: 10px;
+    width: 100%; padding: 12px; background: #1a5c38; color: white;
+    border: none; border-radius: 7px; font-size: 15px; font-weight: bold;
+    cursor: pointer; font-family: inherit; margin-bottom: 10px;
   }
   .btn-admin-login:hover { background: #134a2c; }
   .btn-cancel-login {
-    width: 100%; padding: 10px;
-    background: #f0f0f0; color: #555;
-    border: none; border-radius: 7px;
-    font-size: 14px; cursor: pointer; font-family: inherit;
+    width: 100%; padding: 10px; background: #f0f0f0; color: #555;
+    border: none; border-radius: 7px; font-size: 14px;
+    cursor: pointer; font-family: inherit;
   }
   .btn-cancel-login:hover { background: #e0e0e0; }
 
-  /* ===== لوحة تحكم المالك ===== */
+  /* لوحة التحكم */
   #adminPanel {
-    background: white;
-    border-radius: 14px;
-    padding: 35px 30px;
-    width: 380px;
-    max-width: 92vw;
+    background: white; border-radius: 14px;
+    padding: 35px 30px; width: 390px; max-width: 92vw;
     box-shadow: 0 10px 35px rgba(0,0,0,0.4);
   }
   .panel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 15px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 22px; border-bottom: 2px solid #f0f0f0; padding-bottom: 14px;
   }
   .panel-title { font-size: 17px; font-weight: bold; color: #1a5c38; }
   .btn-close-panel {
     background: none; border: none; font-size: 22px;
-    cursor: pointer; color: #888; line-height: 1;
+    cursor: pointer; color: #888;
   }
   .btn-close-panel:hover { color: #333; }
 
   .status-box {
-    border-radius: 10px;
-    padding: 18px 20px;
-    margin-bottom: 22px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    border-radius: 10px; padding: 16px 18px;
+    margin-bottom: 20px; display: flex; align-items: center; gap: 14px;
   }
-  .status-box.open-status { background: #e8f5e9; border: 2px solid #4caf50; }
-  .status-box.closed-status { background: #fdecea; border: 2px solid #e74c3c; }
-  .status-icon-big { font-size: 32px; }
-  .status-text-box { flex: 1; }
-  .status-label { font-size: 13px; color: #777; margin-bottom: 2px; }
-  .status-value { font-size: 16px; font-weight: bold; }
-  .status-box.open-status .status-value { color: #2e7d32; }
+  .status-box.open-status  { background: #e8f5e9; border: 2px solid #4caf50; }
+  .status-box.closed-status{ background: #fdecea; border: 2px solid #e74c3c; }
+  .status-icon-big { font-size: 30px; }
+  .status-label { font-size: 12px; color: #777; margin-bottom: 2px; }
+  .status-value { font-size: 15px; font-weight: bold; }
+  .status-box.open-status   .status-value { color: #2e7d32; }
   .status-box.closed-status .status-value { color: #c0392b; }
 
-  .toggle-section { margin-bottom: 20px; }
-  .toggle-label {
-    font-size: 13px; color: #555;
-    margin-bottom: 10px; display: block;
-  }
+  .toggle-section { margin-bottom: 16px; }
+  .toggle-label { font-size: 13px; color: #555; margin-bottom: 10px; display: block; }
 
   .btn-toggle-open {
-    width: 100%; padding: 13px;
-    background: #2e7d32; color: white;
-    border: none; border-radius: 8px;
-    font-size: 15px; font-weight: bold;
-    cursor: pointer; font-family: inherit;
-    margin-bottom: 10px;
-    transition: background 0.2s;
+    width: 100%; padding: 13px; background: #2e7d32; color: white;
+    border: none; border-radius: 8px; font-size: 15px; font-weight: bold;
+    cursor: pointer; font-family: inherit; margin-bottom: 10px; transition: opacity 0.2s;
   }
-  .btn-toggle-open:hover { background: #1b5e20; }
-
+  .btn-toggle-open:hover:not(:disabled) { background: #1b5e20; }
   .btn-toggle-close {
-    width: 100%; padding: 13px;
-    background: #c0392b; color: white;
-    border: none; border-radius: 8px;
-    font-size: 15px; font-weight: bold;
-    cursor: pointer; font-family: inherit;
-    transition: background 0.2s;
+    width: 100%; padding: 13px; background: #c0392b; color: white;
+    border: none; border-radius: 8px; font-size: 15px; font-weight: bold;
+    cursor: pointer; font-family: inherit; transition: opacity 0.2s;
   }
-  .btn-toggle-close:hover { background: #a93226; }
+  .btn-toggle-close:hover:not(:disabled) { background: #a93226; }
+
+  .btn-toggle-open:disabled,
+  .btn-toggle-close:disabled { opacity: 0.38; cursor: default; }
+
+  .panel-loading { text-align:center; color:#888; font-size:13px; padding:8px 0; min-height:22px; }
 
   .btn-logout-admin {
-    width: 100%; padding: 10px;
-    background: #f0f0f0; color: #555;
-    border: none; border-radius: 7px;
-    font-size: 13px; cursor: pointer;
-    font-family: inherit; margin-top: 6px;
+    width: 100%; padding: 10px; background: #f0f0f0; color: #555;
+    border: none; border-radius: 7px; font-size: 13px;
+    cursor: pointer; font-family: inherit; margin-top: 8px;
   }
   .btn-logout-admin:hover { background: #e0e0e0; }
+  .panel-note { font-size: 11px; color: #aaa; text-align: center; margin-top: 12px; line-height: 1.7; }
 
-  .panel-note {
-    font-size: 11px; color: #aaa;
-    text-align: center; margin-top: 12px;
-    line-height: 1.6;
-  }
-
-  /* ===== زر المالك المخفي ===== */
-  #ownerBtn {
-    position: fixed;
-    bottom: 18px;
-    left: 18px;
-    width: 38px;
-    height: 38px;
-    background: rgba(0,0,0,0.12);
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 7000;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-  }
-  #ownerBtn:hover { background: rgba(0,0,0,0.25); }
-
-  /* ===== Header / Form styles ===== */
+  /* ===== Header / Form ===== */
   .header {
     background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
-    padding: 0; position: relative; overflow: hidden;
+    padding: 0; overflow: hidden;
   }
   .header-inner {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    padding: 12px 20px;
-    max-width: 900px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; max-width: 900px; margin: 0 auto;
   }
   .header-text { color: white; text-align: right; }
-  .header-text h2 {
-    font-size: 16px; font-weight: bold;
-    line-height: 1.6; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-  }
+  .header-text h2 { font-size: 16px; font-weight: bold; line-height: 1.6; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
   .header-label {
     background: rgba(255,255,255,0.2); color: white;
     text-align: center; padding: 5px; font-size: 12px;
     border-top: 1px solid rgba(255,255,255,0.3);
   }
   .project-banner {
-    background: #2d6a4f; color: white;
-    text-align: center; padding: 8px;
-    font-size: 14px; font-weight: bold; letter-spacing: 1px;
+    background: #2d6a4f; color: white; text-align: center;
+    padding: 8px; font-size: 14px; font-weight: bold; letter-spacing: 1px;
   }
   .main { max-width: 700px; margin: 20px auto; padding: 0 15px 40px; }
-  .form-card {
-    background: white; border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden;
-  }
-  .form-title { background: white; padding: 20px 25px 15px; border-bottom: 2px solid #e0e0e0; }
+  .form-card { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
+  .form-title { padding: 20px 25px 15px; border-bottom: 2px solid #e0e0e0; }
   .form-title h1 { font-size: 22px; font-weight: bold; color: #1a1a1a; margin-bottom: 8px; }
   .required-note { color: #e74c3c; font-size: 12px; }
   .step-indicator {
-    display: flex; justify-content: center;
-    gap: 8px; padding: 12px;
-    background: #f8f8f8; border-bottom: 1px solid #e0e0e0;
+    display: flex; justify-content: center; gap: 8px;
+    padding: 12px; background: #f8f8f8; border-bottom: 1px solid #e0e0e0;
   }
   .step-dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; transition: background 0.3s; }
   .step-dot.active { background: #2d6a4f; }
-  .step-dot.done { background: #5cb85c; }
+  .step-dot.done   { background: #5cb85c; }
   .section { padding: 20px 25px; }
   .section-header {
     background: #3a3a4a; color: white;
@@ -260,9 +210,8 @@
   }
   input[type="text"], input[type="tel"], input[type="number"],
   input[type="date"], select, textarea {
-    width: 100%; padding: 10px 12px;
-    border: 1px solid #ccc; border-radius: 4px;
-    font-size: 14px; font-family: inherit;
+    width: 100%; padding: 10px 12px; border: 1px solid #ccc;
+    border-radius: 4px; font-size: 14px; font-family: inherit;
     direction: rtl; transition: border-color 0.2s; background: white;
   }
   input:focus, select:focus, textarea:focus {
@@ -285,26 +234,25 @@
     font-size: 14px; font-weight: bold; cursor: pointer;
     font-family: inherit; transition: all 0.2s;
   }
-  .btn-next { background: #2d6a4f; color: white; }
+  .btn-next   { background: #2d6a4f; color: white; }
   .btn-next:hover { background: #1a5c38; }
-  .btn-back { background: white; color: #333; border: 1px solid #ccc; }
+  .btn-back   { background: white; color: #333; border: 1px solid #ccc; }
   .btn-back:hover { background: #f0f0f0; }
   .btn-submit { background: #2d6a4f; color: white; padding: 12px 35px; }
   .btn-submit:hover { background: #1a5c38; }
   .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
-  .btn-clear { background: #888; color: white; padding: 10px 20px; }
+  .btn-clear  { background: #888; color: white; padding: 10px 20px; }
   .btn-clear:hover { background: #666; }
   .step-page { display: none; }
   .step-page.active { display: block; }
   .success-screen { display: none; text-align: center; padding: 40px 25px; }
   .success-screen.show { display: block; }
-  .success-icon { font-size: 60px; margin-bottom: 15px; }
+  .success-icon  { font-size: 60px; margin-bottom: 15px; }
   .success-title { font-size: 22px; font-weight: bold; color: #2d6a4f; margin-bottom: 10px; }
-  .success-msg { font-size: 15px; color: #555; line-height: 1.7; }
+  .success-msg   { font-size: 15px; color: #555; line-height: 1.7; }
   .loading-overlay {
-    display: none; position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5); z-index: 999;
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 9000;
     align-items: center; justify-content: center;
     flex-direction: column; gap: 15px; color: white; font-size: 16px;
   }
@@ -319,7 +267,7 @@
   .emblem {
     width: 55px; height: 55px; background: white; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: #2d6a4f; font-weight: bold; text-align: center;
+    color: #2d6a4f; font-weight: bold; text-align: center;
     border: 2px solid rgba(255,255,255,0.5); overflow: hidden;
   }
   .emblem svg { width: 45px; height: 45px; }
@@ -327,6 +275,12 @@
 <base target="_blank">
 </head>
 <body>
+
+<!-- ===== شاشة التحميل الأولي ===== -->
+<div id="initScreen">
+  <div class="spinner"></div>
+  <span>جارٍ التحقق من حالة النموذج...</span>
+</div>
 
 <!-- ===== شاشة النموذج مغلق ===== -->
 <div id="closedScreen">
@@ -340,22 +294,20 @@
   </div>
 </div>
 
-<!-- ===== زر المالك المخفي ===== -->
-<button id="ownerBtn" onclick="openAdminOverlay()" title="⚙">⚙</button>
+<!-- ===== زر المالك — z-index أعلى من كل شيء ===== -->
+<button id="ownerBtn" onclick="openAdminOverlay()" title="إعدادات المالك">⚙</button>
 
 <!-- ===== Admin Overlay ===== -->
 <div id="adminOverlay">
 
-  <!-- شاشة تسجيل الدخول -->
+  <!-- تسجيل الدخول -->
   <div id="adminLoginBox">
     <div class="admin-login-icon">🛡️</div>
     <div class="admin-login-title">لوحة تحكم المالك</div>
-    <input
-      class="admin-input" type="password" id="adminPwd"
-      placeholder="● ● ● ● ● ●" maxlength="30"
+    <input class="admin-input" type="password" id="adminPwd"
+      placeholder="● ● ● ●" maxlength="30"
       onkeydown="if(event.key==='Enter') adminLogin()"
-      autocomplete="off"
-    >
+      autocomplete="off">
     <div class="admin-err" id="adminErr"></div>
     <button class="btn-admin-login" onclick="adminLogin()">دخول</button>
     <button class="btn-cancel-login" onclick="closeAdminOverlay()">إلغاء</button>
@@ -370,33 +322,37 @@
 
     <div id="statusBox" class="status-box open-status">
       <div class="status-icon-big" id="statusIcon">🟢</div>
-      <div class="status-text-box">
-        <div class="status-label">حالة النموذج الحالية</div>
-        <div class="status-value" id="statusValue">مفتوح — يستقبل الطلبات</div>
+      <div>
+        <div class="status-label">حالة النموذج الحالية (من السيرفر)</div>
+        <div class="status-value" id="statusValue">جارٍ التحميل...</div>
       </div>
     </div>
 
+    <div class="panel-loading" id="panelLoading"></div>
+
     <div class="toggle-section">
-      <span class="toggle-label">تغيير حالة النموذج:</span>
-      <button class="btn-toggle-open" id="btnOpen" onclick="setFormState('open')">🟢 فتح النموذج للجميع</button>
-      <button class="btn-toggle-close" id="btnClose" onclick="setFormState('closed')">🔴 إغلاق النموذج</button>
+      <span class="toggle-label">تغيير حالة النموذج على جميع الأجهزة:</span>
+      <button class="btn-toggle-open"  id="btnOpen"  onclick="toggleStatus('OPEN')">🟢 فتح النموذج للجميع</button>
+      <br><br>
+      <button class="btn-toggle-close" id="btnClose" onclick="toggleStatus('CLOSED')">🔴 إغلاق النموذج</button>
     </div>
 
     <button class="btn-logout-admin" onclick="adminLogout()">تسجيل الخروج</button>
     <div class="panel-note">
-      التغيير يُطبَّق فوراً على الصفحة.<br>
-      الحالة محفوظة في المتصفح الحالي.
+      التغيير يُطبَّق فوراً على جميع الأجهزة والمستخدمين.<br>
+      الحالة محفوظة في السيرفر (Google Apps Script).
     </div>
   </div>
 
 </div>
 
-<!-- ===== المحتوى الرئيسي ===== -->
+<!-- ===== Loading overlay ===== -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <span id="loadingText">جارٍ التحميل...</span>
 </div>
 
+<!-- ===== المحتوى الرئيسي ===== -->
 <div class="project-banner">المشروع الوطني للتحصين</div>
 <div class="header">
   <div class="header-inner">
@@ -420,7 +376,6 @@
       <h1>تسجل طلبات التحصين بمحافظة شمال الباطنة</h1>
       <p class="required-note">* تشير إلى أنّ السؤال مطلوب</p>
     </div>
-
     <div class="step-indicator">
       <div class="step-dot active" id="dot1"></div>
       <div class="step-dot" id="dot2"></div>
@@ -447,9 +402,7 @@
         </div>
         <div class="field-group" id="regionGroup" style="display:none;">
           <label class="field-label">المنطقة <span class="req">*</span></label>
-          <select id="region">
-            <option value="">اختيار</option>
-          </select>
+          <select id="region"><option value="">اختيار</option></select>
           <div class="error-msg" id="region-err">الرجاء اختيار المنطقة</div>
         </div>
       </div>
@@ -464,7 +417,7 @@
       <div class="section">
         <div class="field-group">
           <label class="field-label">رقم الهاتف <span class="req">*</span></label>
-          <div class="field-hint">يجب إدخال رقم هاتف صحيح ليتمكن فريق التحصين من التواصل معك.</div>
+          <div class="field-hint">يجب إدخال رقم هاتف صحيح ليتمكن فريق التحصين من التواصل معك. في حال إدخال رقم غير صحيح، سيتم إلغاء الطلب.</div>
           <input type="tel" id="phone" placeholder="إدخالك" maxlength="12">
           <div class="error-msg" id="phone-err">الرجاء إدخال رقم هاتف صحيح</div>
         </div>
@@ -502,7 +455,7 @@
         <div class="section-header info">يرجى استكمال البيانات قبل المتابعة.</div>
         <div class="field-group">
           <label class="field-label">رقم الحيازة الحيوانية <span class="req">*</span></label>
-          <div class="field-hint">في حال عدم امتلاك حيازة، يُرجى التواصل مع الجهة المختصة.</div>
+          <div class="field-hint">في حال عدم امتلاك حيازة، يُرجى التواصل مع الجهة المختصة قبل التسجيل.</div>
           <input type="text" id="licenseNum" placeholder="إدخالك">
           <div class="error-msg" id="licenseNum-err">الرجاء إدخال رقم الحيازة</div>
         </div>
@@ -565,71 +518,45 @@
   // ============================================================
   //  الإعدادات
   // ============================================================
-  const ADMIN_PASSWORD   = "admin2025";
-  const STORAGE_KEY      = "formState_vaccination";  // 'open' | 'closed'
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFa7UQnzSDH3xDMalSuWswXB_kZ3hoY8mqnBc17CpA_Scam1TkbOnvdpDa9hYw3sK53g/exec";
+  const ADMIN_PASSWORD    = "admin2025";   // كلمة مرور لوحة التحكم (محلية)
 
   const WILAYA_COLUMNS = {
     "السويق":"A","الخابورة":"B","صحم":"C",
     "صحار":"D","لوى":"E","شناص":"F"
   };
 
-  let currentStep   = 1;
+  let currentStep    = 1;
   let skippedLicense = false;
   let adminLoggedIn  = false;
+  let serverStatus   = 'OPEN';   // آخر حالة مسحوبة من السيرفر
 
   // ============================================================
-  //  إدارة حالة النموذج
+  //  جلب حالة النموذج من السيرفر عند فتح الصفحة
   // ============================================================
-  function getFormState() {
-    return localStorage.getItem(STORAGE_KEY) || 'open';
+  async function initPage() {
+    try {
+      const res    = await fetch(GOOGLE_SCRIPT_URL + '?action=getRegistrationStatus');
+      const data   = await res.json();
+      serverStatus = data.status || 'OPEN';
+    } catch(e) {
+      serverStatus = 'OPEN'; // عند فشل الاتصال نفتح بشكل افتراضي
+    }
+    applyStatus(serverStatus);
+    document.getElementById('initScreen').style.display = 'none';
   }
 
-  function applyFormState() {
-    const state = getFormState();
-    if (state === 'closed') {
+  function applyStatus(status) {
+    serverStatus = status;
+    if (status === 'CLOSED') {
       document.getElementById('closedScreen').classList.add('show');
     } else {
       document.getElementById('closedScreen').classList.remove('show');
     }
   }
 
-  function setFormState(state) {
-    localStorage.setItem(STORAGE_KEY, state);
-    applyFormState();
-    updatePanelUI();
-  }
-
-  function updatePanelUI() {
-    const state   = getFormState();
-    const isOpen  = (state === 'open');
-    const box     = document.getElementById('statusBox');
-    const icon    = document.getElementById('statusIcon');
-    const val     = document.getElementById('statusValue');
-    const btnOpen  = document.getElementById('btnOpen');
-    const btnClose = document.getElementById('btnClose');
-
-    if (isOpen) {
-      box.className  = 'status-box open-status';
-      icon.textContent = '🟢';
-      val.textContent  = 'مفتوح — يستقبل الطلبات';
-      btnOpen.style.opacity  = '0.4';
-      btnOpen.style.cursor   = 'default';
-      btnClose.style.opacity = '1';
-      btnClose.style.cursor  = 'pointer';
-    } else {
-      box.className  = 'status-box closed-status';
-      icon.textContent = '🔴';
-      val.textContent  = 'مغلق — لا يستقبل الطلبات';
-      btnOpen.style.opacity  = '1';
-      btnOpen.style.cursor   = 'pointer';
-      btnClose.style.opacity = '0.4';
-      btnClose.style.cursor  = 'default';
-    }
-  }
-
   // ============================================================
-  //  Admin overlay
+  //  Admin — فتح الـ overlay
   // ============================================================
   function openAdminOverlay() {
     document.getElementById('adminOverlay').classList.add('show');
@@ -638,9 +565,9 @@
       document.getElementById('adminPanel').style.display    = 'none';
       document.getElementById('adminPwd').value = '';
       document.getElementById('adminErr').textContent = '';
-      setTimeout(() => document.getElementById('adminPwd').focus(), 100);
+      setTimeout(() => document.getElementById('adminPwd').focus(), 120);
     } else {
-      showPanel();
+      showAdminPanel();
     }
   }
 
@@ -654,7 +581,7 @@
     const err = document.getElementById('adminErr');
     if (pwd === ADMIN_PASSWORD) {
       adminLoggedIn = true;
-      showPanel();
+      showAdminPanel();
     } else {
       err.textContent = 'كلمة المرور غير صحيحة';
       inp.value = '';
@@ -664,10 +591,72 @@
     }
   }
 
-  function showPanel() {
+  async function showAdminPanel() {
     document.getElementById('adminLoginBox').style.display = 'none';
     document.getElementById('adminPanel').style.display    = 'block';
+    // اجلب آخر حالة من السيرفر عند فتح اللوحة
+    await refreshPanelStatus();
+  }
+
+  async function refreshPanelStatus() {
+    setPanelLoading(true);
+    try {
+      const res  = await fetch(GOOGLE_SCRIPT_URL + '?action=getRegistrationStatus');
+      const data = await res.json();
+      serverStatus = data.status || 'OPEN';
+    } catch(e) { /* استخدم آخر حالة محفوظة */ }
     updatePanelUI();
+    setPanelLoading(false);
+  }
+
+  function setPanelLoading(on) {
+    const el = document.getElementById('panelLoading');
+    el.textContent = on ? '⏳ جارٍ التحديث...' : '';
+    document.getElementById('btnOpen').disabled  = on;
+    document.getElementById('btnClose').disabled = on;
+  }
+
+  function updatePanelUI() {
+    const isOpen = (serverStatus === 'OPEN');
+    const box    = document.getElementById('statusBox');
+    box.className = 'status-box ' + (isOpen ? 'open-status' : 'closed-status');
+    document.getElementById('statusIcon').textContent  = isOpen ? '🟢' : '🔴';
+    document.getElementById('statusValue').textContent = isOpen
+      ? 'مفتوح — يستقبل الطلبات'
+      : 'مغلق — لا يستقبل الطلبات';
+    document.getElementById('btnOpen').disabled  = isOpen;
+    document.getElementById('btnClose').disabled = !isOpen;
+  }
+
+  // ============================================================
+  //  تغيير الحالة عبر السيرفر (toggleRegistration + PIN)
+  // ============================================================
+  async function toggleStatus(targetStatus) {
+    if (serverStatus === targetStatus) return;
+
+    // PIN المالك من Apps Script هو '2024' (setupAdminPin)
+    // نستخدمه مباشرة هنا — يمكن تغييره ليطابق ما ضبطته في السكريبت
+    const SCRIPT_PIN = "2024";
+
+    setPanelLoading(true);
+    try {
+      const url = GOOGLE_SCRIPT_URL
+        + '?action=toggleRegistration'
+        + '&pin=' + encodeURIComponent(SCRIPT_PIN);
+      const res  = await fetch(url);
+      const data = await res.json();
+
+      if (data.success) {
+        serverStatus = data.status;
+        applyStatus(serverStatus);
+        updatePanelUI();
+      } else {
+        alert('خطأ: ' + (data.error || 'فشل تغيير الحالة'));
+      }
+    } catch(e) {
+      alert('خطأ في الاتصال بالسيرفر');
+    }
+    setPanelLoading(false);
   }
 
   function adminLogout() {
@@ -680,7 +669,7 @@
   // ============================================================
   async function onWilayaChange() {
     const wilaya = document.getElementById('wilaya').value;
-    const regionGroup = document.getElementById('regionGroup');
+    const regionGroup  = document.getElementById('regionGroup');
     const regionSelect = document.getElementById('region');
     if (!wilaya) { regionGroup.style.display='none'; regionSelect.innerHTML='<option value="">اختيار</option>'; return; }
     document.getElementById('wilaya-err').classList.remove('show');
@@ -703,25 +692,19 @@
 
   async function checkPhoneAndGo() {
     if (!validateStep(2)) return;
-    const phone = document.getElementById('phone').value.trim();
+    const phone      = document.getElementById('phone').value.trim();
     const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
-    document.getElementById('loadingText').textContent = 'جاري التحقق من رقم الهاتف...';
-    document.getElementById('loadingOverlay').classList.add('show');
+    showLoading('جاري التحقق من رقم الهاتف...');
     try {
-      const res = await fetch(GOOGLE_SCRIPT_URL+'?action=checkPhone&phone='+encodeURIComponent(phone));
+      const res    = await fetch(GOOGLE_SCRIPT_URL+'?action=checkPhone&phone='+encodeURIComponent(phone));
       const result = await res.json();
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+      hideLoading();
       if (result.exists) { alert('تم تسجيل طلبك مسبقاً'); }
       else {
         if (hasLicense === 'لا') { skippedLicense=true; document.getElementById('dot3').classList.add('done'); goStep(4); }
         else { skippedLicense=false; goStep(3); }
       }
-    } catch(e) {
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-      alert('حدث خطأ في التحقق من رقم الهاتف');
-    }
+    } catch(e) { hideLoading(); alert('حدث خطأ في التحقق من رقم الهاتف'); }
   }
 
   function goBackFromStep4() { goStep(skippedLicense ? 2 : 3); }
@@ -746,21 +729,21 @@
       valid = checkField('region', v=>v!=='') && valid;
     }
     if (step===2) {
-      valid = checkField('phone', v=>v.trim().length>=8) && valid;
+      valid = checkField('phone',    v=>v.trim().length>=8) && valid;
       valid = checkField('fullName', v=>v.trim().length>=5) && valid;
-      valid = checkField('civilId', v=>v.trim().length>=7) && valid;
+      valid = checkField('civilId',  v=>v.trim().length>=7) && valid;
       const licVal = document.querySelector('input[name="hasLicense"]:checked');
       const licErr = document.getElementById('hasLicense-err');
       if (!licVal) { licErr.classList.add('show'); valid=false; } else licErr.classList.remove('show');
     }
     if (step===3) {
-      valid = checkField('licenseNum', v=>v.trim().length>=3) && valid;
-      valid = checkField('licenseExpiry', v=>v.trim()!=='') && valid;
+      valid = checkField('licenseNum',    v=>v.trim().length>=3) && valid;
+      valid = checkField('licenseExpiry', v=>v.trim()!=='')       && valid;
     }
     if (step===4) {
       valid = checkField('goats', v=>v!=='') && valid;
       valid = checkField('sheep', v=>v!=='') && valid;
-      valid = checkField('cows', v=>v!=='') && valid;
+      valid = checkField('cows',  v=>v!=='') && valid;
     }
     return valid;
   }
@@ -769,18 +752,17 @@
     const el=document.getElementById(id), err=document.getElementById(id+'-err');
     if (!el) return true;
     if (!condition(el.value)) { el.classList.add('error'); if(err) err.classList.add('show'); return false; }
-    else { el.classList.remove('error'); if(err) err.classList.remove('show'); return true; }
+    el.classList.remove('error'); if(err) err.classList.remove('show'); return true;
   }
 
   function clearForm() {
-    if (confirm('هل تريد محو جميع البيانات المدخلة؟')) {
-      document.querySelectorAll('input[type="text"],input[type="tel"],input[type="number"],input[type="date"],select').forEach(el=>el.value='');
-      document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);
-      document.getElementById('regionGroup').style.display='none';
-      document.getElementById('region').innerHTML='<option value="">اختيار</option>';
-      document.querySelectorAll('.error-msg').forEach(e=>e.classList.remove('show'));
-      document.querySelectorAll('input.error,select.error').forEach(e=>e.classList.remove('error'));
-    }
+    if (!confirm('هل تريد محو جميع البيانات المدخلة؟')) return;
+    document.querySelectorAll('input[type="text"],input[type="tel"],input[type="number"],input[type="date"],select').forEach(el=>el.value='');
+    document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);
+    document.getElementById('regionGroup').style.display='none';
+    document.getElementById('region').innerHTML='<option value="">اختيار</option>';
+    document.querySelectorAll('.error-msg').forEach(e=>e.classList.remove('show'));
+    document.querySelectorAll('input.error,select.error').forEach(e=>e.classList.remove('error'));
   }
 
   function resetForm() {
@@ -797,45 +779,51 @@
 
   async function submitForm() {
     if (!validateStep(4)) return;
-    const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
+    const hasLicense  = document.querySelector('input[name="hasLicense"]:checked')?.value;
     const skipLicense = (hasLicense==='لا');
     const data = {
-      wilaya: document.getElementById('wilaya').value,
-      phone: document.getElementById('phone').value,
-      fullName: document.getElementById('fullName').value,
-      civilId: document.getElementById('civilId').value,
-      region: document.getElementById('region').value,
-      licenseNum: skipLicense?'':document.getElementById('licenseNum').value,
+      wilaya:        document.getElementById('wilaya').value,
+      phone:         document.getElementById('phone').value,
+      fullName:      document.getElementById('fullName').value,
+      civilId:       document.getElementById('civilId').value,
+      region:        document.getElementById('region').value,
+      licenseNum:    skipLicense?'':document.getElementById('licenseNum').value,
       licenseExpiry: skipLicense?'':document.getElementById('licenseExpiry').value,
-      goats: document.getElementById('goats').value,
-      sheep: document.getElementById('sheep').value,
-      cows: document.getElementById('cows').value,
+      goats:         document.getElementById('goats').value,
+      sheep:         document.getElementById('sheep').value,
+      cows:          document.getElementById('cows').value,
       empty1:'',empty2:'',empty3:'',empty4:'',
       dateOnly: new Date().toISOString().split('T')[0],
     };
-    document.getElementById('loadingText').textContent='جارٍ إرسال البيانات...';
-    document.getElementById('loadingOverlay').classList.add('show');
+    showLoading('جارٍ إرسال البيانات...');
     document.getElementById('submitBtn').disabled=true;
     try {
       const formData = new FormData();
       Object.keys(data).forEach(k=>formData.append(k,data[k]));
       await fetch(GOOGLE_SCRIPT_URL,{method:'POST',mode:'no-cors',body:formData});
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent='جارٍ التحميل...';
+      hideLoading();
       document.querySelectorAll('.step-page').forEach(p=>p.classList.remove('active'));
       document.getElementById('successScreen').classList.add('show');
-    } catch(err) {
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent='جارٍ التحميل...';
+    } catch(e) {
+      hideLoading();
       document.getElementById('submitBtn').disabled=false;
-      alert('حدث خطأ في الإرسال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى.');
+      alert('حدث خطأ في الإرسال. يرجى التحقق من الاتصال والمحاولة مجدداً.');
     }
+  }
+
+  function showLoading(msg) {
+    document.getElementById('loadingText').textContent = msg || 'جارٍ التحميل...';
+    document.getElementById('loadingOverlay').classList.add('show');
+  }
+  function hideLoading() {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
   }
 
   // ============================================================
   //  تهيئة الصفحة
   // ============================================================
-  applyFormState();
+  initPage();
 </script>
 </body>
 </html>
