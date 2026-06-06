@@ -6,7 +6,6 @@
 <title>تسجل طلبات التحصين</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
     background: #f0f0f0;
@@ -14,296 +13,278 @@
     min-height: 100vh;
   }
 
-  /* ========== شاشة كلمة المرور ========== */
-  #lockScreen {
+  /* ===== شاشة النموذج مغلق ===== */
+  #closedScreen {
+    display: none;
     position: fixed;
     inset: 0;
     background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
-    display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: 8000;
   }
-
-  .lock-card {
+  #closedScreen.show { display: flex; }
+  .closed-card {
     background: white;
-    border-radius: 12px;
-    padding: 40px 35px;
+    border-radius: 14px;
+    padding: 45px 35px;
+    width: 360px;
+    max-width: 92vw;
+    text-align: center;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+  }
+  .closed-icon { font-size: 58px; margin-bottom: 14px; }
+  .closed-title { font-size: 20px; font-weight: bold; color: #c0392b; margin-bottom: 10px; }
+  .closed-msg { font-size: 14px; color: #555; line-height: 1.8; }
+
+  /* ===== لوحة المالك overlay ===== */
+  #adminOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 9000;
+    align-items: center;
+    justify-content: center;
+  }
+  #adminOverlay.show { display: flex; }
+
+  /* ===== شاشة تسجيل دخول المالك ===== */
+  #adminLoginBox {
+    background: white;
+    border-radius: 14px;
+    padding: 38px 32px;
     width: 340px;
-    max-width: 90vw;
+    max-width: 92vw;
     text-align: center;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.4);
   }
-
-  .lock-icon { font-size: 52px; margin-bottom: 12px; }
-
-  .lock-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #1a5c38;
-    margin-bottom: 6px;
-  }
-
-  .lock-subtitle {
-    font-size: 13px;
-    color: #777;
-    margin-bottom: 24px;
-  }
-
-  .lock-input {
+  .admin-login-icon { font-size: 48px; margin-bottom: 10px; }
+  .admin-login-title { font-size: 17px; font-weight: bold; color: #1a5c38; margin-bottom: 18px; }
+  .admin-input {
     width: 100%;
-    padding: 12px 14px;
+    padding: 11px 14px;
     border: 2px solid #ddd;
-    border-radius: 6px;
-    font-size: 18px;
+    border-radius: 7px;
+    font-size: 16px;
     text-align: center;
-    letter-spacing: 6px;
+    letter-spacing: 4px;
     font-family: monospace;
     direction: ltr;
-    transition: border-color 0.2s;
-    margin-bottom: 14px;
-  }
-
-  .lock-input:focus {
-    outline: none;
-    border-color: #2d6a4f;
-    box-shadow: 0 0 0 3px rgba(45,106,79,0.15);
-  }
-
-  .lock-input.shake {
-    animation: shake 0.4s ease;
-    border-color: #e74c3c;
-  }
-
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20% { transform: translateX(-8px); }
-    40% { transform: translateX(8px); }
-    60% { transform: translateX(-6px); }
-    80% { transform: translateX(6px); }
-  }
-
-  .lock-error {
-    color: #e74c3c;
-    font-size: 13px;
     margin-bottom: 12px;
-    min-height: 18px;
-    transition: opacity 0.2s;
+    transition: border-color 0.2s;
+  }
+  .admin-input:focus { outline: none; border-color: #2d6a4f; }
+  .admin-input.shake { animation: shake 0.4s ease; border-color: #e74c3c; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)}
+    40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)}
+  }
+  .admin-err { color: #e74c3c; font-size: 12px; min-height: 18px; margin-bottom: 10px; }
+  .btn-admin-login {
+    width: 100%; padding: 12px;
+    background: #1a5c38; color: white;
+    border: none; border-radius: 7px;
+    font-size: 15px; font-weight: bold;
+    cursor: pointer; font-family: inherit;
+    margin-bottom: 10px;
+  }
+  .btn-admin-login:hover { background: #134a2c; }
+  .btn-cancel-login {
+    width: 100%; padding: 10px;
+    background: #f0f0f0; color: #555;
+    border: none; border-radius: 7px;
+    font-size: 14px; cursor: pointer; font-family: inherit;
+  }
+  .btn-cancel-login:hover { background: #e0e0e0; }
+
+  /* ===== لوحة تحكم المالك ===== */
+  #adminPanel {
+    background: white;
+    border-radius: 14px;
+    padding: 35px 30px;
+    width: 380px;
+    max-width: 92vw;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.4);
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 15px;
+  }
+  .panel-title { font-size: 17px; font-weight: bold; color: #1a5c38; }
+  .btn-close-panel {
+    background: none; border: none; font-size: 22px;
+    cursor: pointer; color: #888; line-height: 1;
+  }
+  .btn-close-panel:hover { color: #333; }
+
+  .status-box {
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .status-box.open-status { background: #e8f5e9; border: 2px solid #4caf50; }
+  .status-box.closed-status { background: #fdecea; border: 2px solid #e74c3c; }
+  .status-icon-big { font-size: 32px; }
+  .status-text-box { flex: 1; }
+  .status-label { font-size: 13px; color: #777; margin-bottom: 2px; }
+  .status-value { font-size: 16px; font-weight: bold; }
+  .status-box.open-status .status-value { color: #2e7d32; }
+  .status-box.closed-status .status-value { color: #c0392b; }
+
+  .toggle-section { margin-bottom: 20px; }
+  .toggle-label {
+    font-size: 13px; color: #555;
+    margin-bottom: 10px; display: block;
   }
 
-  .btn-unlock {
-    width: 100%;
-    padding: 12px;
-    background: #2d6a4f;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    font-family: inherit;
+  .btn-toggle-open {
+    width: 100%; padding: 13px;
+    background: #2e7d32; color: white;
+    border: none; border-radius: 8px;
+    font-size: 15px; font-weight: bold;
+    cursor: pointer; font-family: inherit;
+    margin-bottom: 10px;
     transition: background 0.2s;
   }
+  .btn-toggle-open:hover { background: #1b5e20; }
 
-  .btn-unlock:hover { background: #1a5c38; }
+  .btn-toggle-close {
+    width: 100%; padding: 13px;
+    background: #c0392b; color: white;
+    border: none; border-radius: 8px;
+    font-size: 15px; font-weight: bold;
+    cursor: pointer; font-family: inherit;
+    transition: background 0.2s;
+  }
+  .btn-toggle-close:hover { background: #a93226; }
 
-  /* ========== المحتوى الرئيسي ========== */
-  #mainContent { display: none; }
+  .btn-logout-admin {
+    width: 100%; padding: 10px;
+    background: #f0f0f0; color: #555;
+    border: none; border-radius: 7px;
+    font-size: 13px; cursor: pointer;
+    font-family: inherit; margin-top: 6px;
+  }
+  .btn-logout-admin:hover { background: #e0e0e0; }
 
+  .panel-note {
+    font-size: 11px; color: #aaa;
+    text-align: center; margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  /* ===== زر المالك المخفي ===== */
+  #ownerBtn {
+    position: fixed;
+    bottom: 18px;
+    left: 18px;
+    width: 38px;
+    height: 38px;
+    background: rgba(0,0,0,0.12);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 7000;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  #ownerBtn:hover { background: rgba(0,0,0,0.25); }
+
+  /* ===== Header / Form styles ===== */
   .header {
     background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
-    padding: 0;
-    position: relative;
-    overflow: hidden;
+    padding: 0; position: relative; overflow: hidden;
   }
-
   .header-inner {
-    display: flex;
-    align-items: center;
+    display: flex; align-items: center;
     justify-content: space-between;
     padding: 12px 20px;
-    max-width: 900px;
-    margin: 0 auto;
+    max-width: 900px; margin: 0 auto;
   }
-
   .header-text { color: white; text-align: right; }
-
   .header-text h2 {
-    font-size: 16px;
-    font-weight: bold;
-    line-height: 1.6;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    font-size: 16px; font-weight: bold;
+    line-height: 1.6; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
   }
-
   .header-label {
-    background: rgba(255,255,255,0.2);
-    color: white;
-    text-align: center;
-    padding: 5px;
-    font-size: 12px;
+    background: rgba(255,255,255,0.2); color: white;
+    text-align: center; padding: 5px; font-size: 12px;
     border-top: 1px solid rgba(255,255,255,0.3);
   }
-
   .project-banner {
-    background: #2d6a4f;
-    color: white;
-    text-align: center;
-    padding: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 1px;
+    background: #2d6a4f; color: white;
+    text-align: center; padding: 8px;
+    font-size: 14px; font-weight: bold; letter-spacing: 1px;
   }
-
-  .main {
-    max-width: 700px;
-    margin: 20px auto;
-    padding: 0 15px 40px;
-  }
-
+  .main { max-width: 700px; margin: 20px auto; padding: 0 15px 40px; }
   .form-card {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
+    background: white; border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden;
   }
-
-  .form-title {
-    background: white;
-    padding: 20px 25px 15px;
-    border-bottom: 2px solid #e0e0e0;
-  }
-
-  .form-title h1 {
-    font-size: 22px;
-    font-weight: bold;
-    color: #1a1a1a;
-    margin-bottom: 8px;
-  }
-
+  .form-title { background: white; padding: 20px 25px 15px; border-bottom: 2px solid #e0e0e0; }
+  .form-title h1 { font-size: 22px; font-weight: bold; color: #1a1a1a; margin-bottom: 8px; }
   .required-note { color: #e74c3c; font-size: 12px; }
-
   .step-indicator {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    background: #f8f8f8;
-    border-bottom: 1px solid #e0e0e0;
+    display: flex; justify-content: center;
+    gap: 8px; padding: 12px;
+    background: #f8f8f8; border-bottom: 1px solid #e0e0e0;
   }
-
-  .step-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #ccc;
-    transition: background 0.3s;
-  }
-
+  .step-dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; transition: background 0.3s; }
   .step-dot.active { background: #2d6a4f; }
   .step-dot.done { background: #5cb85c; }
-
   .section { padding: 20px 25px; }
-
   .section-header {
-    background: #3a3a4a;
-    color: white;
-    padding: 10px 15px;
-    font-size: 14px;
-    font-weight: bold;
+    background: #3a3a4a; color: white;
+    padding: 10px 15px; font-size: 14px; font-weight: bold;
     margin: -20px -25px 20px;
   }
-
   .section-header.info { background: #d4e8ff; color: #1a4a8a; }
-
   .field-group { margin-bottom: 20px; }
-
-  .field-label {
-    display: block;
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 6px;
-  }
-
+  .field-label { display: block; font-size: 14px; font-weight: bold; color: #333; margin-bottom: 6px; }
   .field-label .req { color: #e74c3c; margin-right: 2px; }
-
   .field-hint {
-    font-size: 12px;
-    color: #555;
-    margin-bottom: 6px;
-    background: #fff3cd;
-    padding: 6px 10px;
-    border-right: 3px solid #f0ad4e;
-    border-radius: 3px;
+    font-size: 12px; color: #555; margin-bottom: 6px;
+    background: #fff3cd; padding: 6px 10px;
+    border-right: 3px solid #f0ad4e; border-radius: 3px;
   }
-
-  input[type="text"],
-  input[type="tel"],
-  input[type="number"],
-  input[type="date"],
-  select,
-  textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    font-family: inherit;
-    direction: rtl;
-    transition: border-color 0.2s;
-    background: white;
+  input[type="text"], input[type="tel"], input[type="number"],
+  input[type="date"], select, textarea {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #ccc; border-radius: 4px;
+    font-size: 14px; font-family: inherit;
+    direction: rtl; transition: border-color 0.2s; background: white;
   }
-
   input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: #2d6a4f;
+    outline: none; border-color: #2d6a4f;
     box-shadow: 0 0 0 2px rgba(45,106,79,0.15);
   }
-
   input.error, select.error { border-color: #e74c3c; }
-
   .error-msg { color: #e74c3c; font-size: 12px; margin-top: 4px; display: none; }
   .error-msg.show { display: block; }
-
   .radio-group { display: flex; gap: 20px; margin-top: 6px; }
-
-  .radio-option {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-
-  .radio-option input[type="radio"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: #2d6a4f;
-  }
-
+  .radio-option { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+  .radio-option input[type="radio"] { width: 18px; height: 18px; cursor: pointer; accent-color: #2d6a4f; }
   .btn-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 25px;
-    background: #f8f8f8;
-    border-top: 1px solid #e0e0e0;
-    gap: 10px;
-    flex-wrap: wrap;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 25px; background: #f8f8f8;
+    border-top: 1px solid #e0e0e0; gap: 10px; flex-wrap: wrap;
   }
-
   .btn {
-    padding: 10px 28px;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s;
+    padding: 10px 28px; border: none; border-radius: 5px;
+    font-size: 14px; font-weight: bold; cursor: pointer;
+    font-family: inherit; transition: all 0.2s;
   }
-
   .btn-next { background: #2d6a4f; color: white; }
   .btn-next:hover { background: #1a5c38; }
   .btn-back { background: white; color: #333; border: 1px solid #ccc; }
@@ -313,88 +294,104 @@
   .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
   .btn-clear { background: #888; color: white; padding: 10px 20px; }
   .btn-clear:hover { background: #666; }
-
   .step-page { display: none; }
   .step-page.active { display: block; }
-
   .success-screen { display: none; text-align: center; padding: 40px 25px; }
   .success-screen.show { display: block; }
   .success-icon { font-size: 60px; margin-bottom: 15px; }
   .success-title { font-size: 22px; font-weight: bold; color: #2d6a4f; margin-bottom: 10px; }
   .success-msg { font-size: 15px; color: #555; line-height: 1.7; }
-
   .loading-overlay {
-    display: none;
-    position: fixed;
+    display: none; position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 999;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 15px;
-    color: white;
-    font-size: 16px;
+    background: rgba(0,0,0,0.5); z-index: 999;
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 15px; color: white; font-size: 16px;
   }
-
   .loading-overlay.show { display: flex; }
-
   .spinner {
-    width: 50px;
-    height: 50px;
+    width: 50px; height: 50px;
     border: 5px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
+    border-top-color: white; border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .emblem {
-    width: 55px;
-    height: 55px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    color: #2d6a4f;
-    font-weight: bold;
-    text-align: center;
-    border: 2px solid rgba(255,255,255,0.5);
-    overflow: hidden;
+    width: 55px; height: 55px; background: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #2d6a4f; font-weight: bold; text-align: center;
+    border: 2px solid rgba(255,255,255,0.5); overflow: hidden;
   }
-
   .emblem svg { width: 45px; height: 45px; }
 </style>
 <base target="_blank">
 </head>
 <body>
 
-<!-- ========== شاشة القفل ========== -->
-<div id="lockScreen">
-  <div class="lock-card">
-    <div class="lock-icon">🔒</div>
-    <div class="lock-title">النموذج متوقف مؤقتاً</div>
-    <div class="lock-subtitle">للموظفين فقط — أدخل كلمة المرور للمتابعة</div>
-    <input
-      class="lock-input"
-      type="password"
-      id="pwdInput"
-      placeholder="● ● ● ●"
-      maxlength="20"
-      onkeydown="if(event.key==='Enter') unlock()"
-      autocomplete="off"
-    >
-    <div class="lock-error" id="lockError"></div>
-    <button class="btn-unlock" onclick="unlock()">دخول</button>
+<!-- ===== شاشة النموذج مغلق ===== -->
+<div id="closedScreen">
+  <div class="closed-card">
+    <div class="closed-icon">🔴</div>
+    <div class="closed-title">النموذج مغلق حالياً</div>
+    <div class="closed-msg">
+      عذراً، تم إيقاف استقبال طلبات التحصين مؤقتاً.<br><br>
+      يُرجى المتابعة لاحقاً أو التواصل مع الجهة المختصة.
+    </div>
   </div>
 </div>
 
-<!-- ========== المحتوى الرئيسي ========== -->
-<div id="mainContent">
+<!-- ===== زر المالك المخفي ===== -->
+<button id="ownerBtn" onclick="openAdminOverlay()" title="⚙">⚙</button>
 
+<!-- ===== Admin Overlay ===== -->
+<div id="adminOverlay">
+
+  <!-- شاشة تسجيل الدخول -->
+  <div id="adminLoginBox">
+    <div class="admin-login-icon">🛡️</div>
+    <div class="admin-login-title">لوحة تحكم المالك</div>
+    <input
+      class="admin-input" type="password" id="adminPwd"
+      placeholder="● ● ● ● ● ●" maxlength="30"
+      onkeydown="if(event.key==='Enter') adminLogin()"
+      autocomplete="off"
+    >
+    <div class="admin-err" id="adminErr"></div>
+    <button class="btn-admin-login" onclick="adminLogin()">دخول</button>
+    <button class="btn-cancel-login" onclick="closeAdminOverlay()">إلغاء</button>
+  </div>
+
+  <!-- لوحة التحكم -->
+  <div id="adminPanel" style="display:none;">
+    <div class="panel-header">
+      <span class="panel-title">⚙️ لوحة تحكم المالك</span>
+      <button class="btn-close-panel" onclick="closeAdminOverlay()">✕</button>
+    </div>
+
+    <div id="statusBox" class="status-box open-status">
+      <div class="status-icon-big" id="statusIcon">🟢</div>
+      <div class="status-text-box">
+        <div class="status-label">حالة النموذج الحالية</div>
+        <div class="status-value" id="statusValue">مفتوح — يستقبل الطلبات</div>
+      </div>
+    </div>
+
+    <div class="toggle-section">
+      <span class="toggle-label">تغيير حالة النموذج:</span>
+      <button class="btn-toggle-open" id="btnOpen" onclick="setFormState('open')">🟢 فتح النموذج للجميع</button>
+      <button class="btn-toggle-close" id="btnClose" onclick="setFormState('closed')">🔴 إغلاق النموذج</button>
+    </div>
+
+    <button class="btn-logout-admin" onclick="adminLogout()">تسجيل الخروج</button>
+    <div class="panel-note">
+      التغيير يُطبَّق فوراً على الصفحة.<br>
+      الحالة محفوظة في المتصفح الحالي.
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== المحتوى الرئيسي ===== -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <span id="loadingText">جارٍ التحميل...</span>
@@ -404,11 +401,7 @@
 <div class="header">
   <div class="header-inner">
     <div class="header-text">
-      <h2>
-        سلطنة عمان<br>
-        وزارة الثروة الزراعية<br>
-        والسمكية وموارد المياه
-      </h2>
+      <h2>سلطنة عمان<br>وزارة الثروة الزراعية<br>والسمكية وموارد المياه</h2>
     </div>
     <div class="emblem">
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -439,7 +432,6 @@
     <div class="step-page active" id="step1">
       <div class="section">
         <div class="section-header info">اختيار الولاية والمنطقة</div>
-
         <div class="field-group">
           <label class="field-label">الولاية <span class="req">*</span></label>
           <select id="wilaya" onchange="onWilayaChange()">
@@ -453,7 +445,6 @@
           </select>
           <div class="error-msg" id="wilaya-err">الرجاء اختيار الولاية</div>
         </div>
-
         <div class="field-group" id="regionGroup" style="display:none;">
           <label class="field-label">المنطقة <span class="req">*</span></label>
           <select id="region">
@@ -473,28 +464,25 @@
       <div class="section">
         <div class="field-group">
           <label class="field-label">رقم الهاتف <span class="req">*</span></label>
-          <div class="field-hint">يجب إدخال رقم هاتف صحيح ليتمكن فريق التحصين من التواصل معك. في حال إدخال رقم غير صحيح، سيتم إلغاء الطلب.</div>
+          <div class="field-hint">يجب إدخال رقم هاتف صحيح ليتمكن فريق التحصين من التواصل معك.</div>
           <input type="tel" id="phone" placeholder="إدخالك" maxlength="12">
           <div class="error-msg" id="phone-err">الرجاء إدخال رقم هاتف صحيح</div>
         </div>
-
         <div class="field-group">
           <label class="field-label">اسم المربي الثلاثي <span class="req">*</span></label>
           <div class="field-hint">مثال: فلان بن / بنت فلان بن فلان القبيلة</div>
           <input type="text" id="fullName" placeholder="إدخالك">
           <div class="error-msg" id="fullName-err">الرجاء إدخال الاسم الثلاثي</div>
         </div>
-
         <div class="field-group">
           <label class="field-label">الرقم المدني <span class="req">*</span></label>
           <div class="field-hint">أدخل الرقم كاملاً بدون أي فواصل أو رموز إضافية</div>
           <input type="text" id="civilId" placeholder="إدخالك" maxlength="12">
           <div class="error-msg" id="civilId-err">الرجاء إدخال الرقم المدني</div>
         </div>
-
         <div class="field-group">
           <label class="field-label">هل تمتلك حيازة حيوانية مسجلة؟ <span class="req">*</span></label>
-          <div class="radio-group" id="hasLicense">
+          <div class="radio-group">
             <label class="radio-option"><input type="radio" name="hasLicense" value="نعم"> نعم</label>
             <label class="radio-option"><input type="radio" name="hasLicense" value="لا"> لا</label>
           </div>
@@ -511,18 +499,16 @@
     <!-- STEP 3 -->
     <div class="step-page" id="step3">
       <div class="section">
-        <div class="section-header info">يرجى استكمال البيانات أثناء قبل المتابعة.</div>
-
+        <div class="section-header info">يرجى استكمال البيانات قبل المتابعة.</div>
         <div class="field-group">
           <label class="field-label">رقم الحيازة الحيوانية <span class="req">*</span></label>
-          <div class="field-hint">في حال عدم امتلاك حيازة حيوانية، يُرجى التواصل عبر رقم الاستفسارات الموضح أعلى الصفحة الرئيسية قبل متابعة عملية التسجيل.</div>
+          <div class="field-hint">في حال عدم امتلاك حيازة، يُرجى التواصل مع الجهة المختصة.</div>
           <input type="text" id="licenseNum" placeholder="إدخالك">
           <div class="error-msg" id="licenseNum-err">الرجاء إدخال رقم الحيازة</div>
         </div>
-
         <div class="field-group">
           <label class="field-label">تاريخ انتهاء الحيازة الحيوانية <span class="req">*</span></label>
-          <div class="field-hint">لن يتم النظر في الطلب في حال كانت الحيازة منتهية. يُرجى التأكد من تجديد الحيازة قبل التسجيل.</div>
+          <div class="field-hint">لن يتم النظر في الطلب في حال كانت الحيازة منتهية.</div>
           <input type="date" id="licenseExpiry">
           <div class="error-msg" id="licenseExpiry-err">الرجاء إدخال تاريخ انتهاء الحيازة</div>
         </div>
@@ -538,22 +524,19 @@
     <div class="step-page" id="step4">
       <div class="section">
         <div class="section-header" style="background:#555;color:white;">تأمل منكم استكمال البيانات المطلوبة لإتمام الإجراء.</div>
-
         <div class="field-group">
           <label class="field-label">عدد الماعز <span class="req">*</span></label>
-          <input type="number" id="goats" placeholder="إدخالك" min="0" value="">
+          <input type="number" id="goats" placeholder="إدخالك" min="0">
           <div class="error-msg" id="goats-err">الرجاء إدخال عدد الماعز</div>
         </div>
-
         <div class="field-group">
           <label class="field-label">عدد الضأن <span class="req">*</span></label>
-          <input type="number" id="sheep" placeholder="إدخالك" min="0" value="">
+          <input type="number" id="sheep" placeholder="إدخالك" min="0">
           <div class="error-msg" id="sheep-err">الرجاء إدخال عدد الضأن</div>
         </div>
-
         <div class="field-group">
           <label class="field-label">عدد الأبقار <span class="req">*</span></label>
-          <input type="number" id="cows" placeholder="إدخالك" min="0" value="">
+          <input type="number" id="cows" placeholder="إدخالك" min="0">
           <div class="error-msg" id="cows-err">الرجاء إدخال عدد الأبقار</div>
         </div>
       </div>
@@ -578,244 +561,281 @@
   </div>
 </div>
 
-</div><!-- end mainContent -->
-
 <script>
-  // ========== القفل ==========
-  const CORRECT_PASSWORD = "1234";
-
-  function unlock() {
-    const val = document.getElementById('pwdInput').value;
-    const errEl = document.getElementById('lockError');
-    const input = document.getElementById('pwdInput');
-
-    if (val === CORRECT_PASSWORD) {
-      document.getElementById('lockScreen').style.display = 'none';
-      document.getElementById('mainContent').style.display = 'block';
-    } else {
-      errEl.textContent = 'كلمة المرور غير صحيحة، حاول مجدداً';
-      input.value = '';
-      input.classList.add('shake');
-      setTimeout(() => input.classList.remove('shake'), 500);
-      input.focus();
-    }
-  }
-
-  // ========== النموذج ==========
+  // ============================================================
+  //  الإعدادات
+  // ============================================================
+  const ADMIN_PASSWORD   = "admin2025";
+  const STORAGE_KEY      = "formState_vaccination";  // 'open' | 'closed'
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFa7UQnzSDH3xDMalSuWswXB_kZ3hoY8mqnBc17CpA_Scam1TkbOnvdpDa9hYw3sK53g/exec";
 
   const WILAYA_COLUMNS = {
-    "السويق": "A", "الخابورة": "B", "صحم": "C",
-    "صحار": "D", "لوى": "E", "شناص": "F"
+    "السويق":"A","الخابورة":"B","صحم":"C",
+    "صحار":"D","لوى":"E","شناص":"F"
   };
 
-  let currentStep = 1;
+  let currentStep   = 1;
   let skippedLicense = false;
+  let adminLoggedIn  = false;
 
+  // ============================================================
+  //  إدارة حالة النموذج
+  // ============================================================
+  function getFormState() {
+    return localStorage.getItem(STORAGE_KEY) || 'open';
+  }
+
+  function applyFormState() {
+    const state = getFormState();
+    if (state === 'closed') {
+      document.getElementById('closedScreen').classList.add('show');
+    } else {
+      document.getElementById('closedScreen').classList.remove('show');
+    }
+  }
+
+  function setFormState(state) {
+    localStorage.setItem(STORAGE_KEY, state);
+    applyFormState();
+    updatePanelUI();
+  }
+
+  function updatePanelUI() {
+    const state   = getFormState();
+    const isOpen  = (state === 'open');
+    const box     = document.getElementById('statusBox');
+    const icon    = document.getElementById('statusIcon');
+    const val     = document.getElementById('statusValue');
+    const btnOpen  = document.getElementById('btnOpen');
+    const btnClose = document.getElementById('btnClose');
+
+    if (isOpen) {
+      box.className  = 'status-box open-status';
+      icon.textContent = '🟢';
+      val.textContent  = 'مفتوح — يستقبل الطلبات';
+      btnOpen.style.opacity  = '0.4';
+      btnOpen.style.cursor   = 'default';
+      btnClose.style.opacity = '1';
+      btnClose.style.cursor  = 'pointer';
+    } else {
+      box.className  = 'status-box closed-status';
+      icon.textContent = '🔴';
+      val.textContent  = 'مغلق — لا يستقبل الطلبات';
+      btnOpen.style.opacity  = '1';
+      btnOpen.style.cursor   = 'pointer';
+      btnClose.style.opacity = '0.4';
+      btnClose.style.cursor  = 'default';
+    }
+  }
+
+  // ============================================================
+  //  Admin overlay
+  // ============================================================
+  function openAdminOverlay() {
+    document.getElementById('adminOverlay').classList.add('show');
+    if (!adminLoggedIn) {
+      document.getElementById('adminLoginBox').style.display = 'block';
+      document.getElementById('adminPanel').style.display    = 'none';
+      document.getElementById('adminPwd').value = '';
+      document.getElementById('adminErr').textContent = '';
+      setTimeout(() => document.getElementById('adminPwd').focus(), 100);
+    } else {
+      showPanel();
+    }
+  }
+
+  function closeAdminOverlay() {
+    document.getElementById('adminOverlay').classList.remove('show');
+  }
+
+  function adminLogin() {
+    const pwd = document.getElementById('adminPwd').value;
+    const inp = document.getElementById('adminPwd');
+    const err = document.getElementById('adminErr');
+    if (pwd === ADMIN_PASSWORD) {
+      adminLoggedIn = true;
+      showPanel();
+    } else {
+      err.textContent = 'كلمة المرور غير صحيحة';
+      inp.value = '';
+      inp.classList.add('shake');
+      setTimeout(() => inp.classList.remove('shake'), 500);
+      inp.focus();
+    }
+  }
+
+  function showPanel() {
+    document.getElementById('adminLoginBox').style.display = 'none';
+    document.getElementById('adminPanel').style.display    = 'block';
+    updatePanelUI();
+  }
+
+  function adminLogout() {
+    adminLoggedIn = false;
+    closeAdminOverlay();
+  }
+
+  // ============================================================
+  //  منطق النموذج
+  // ============================================================
   async function onWilayaChange() {
     const wilaya = document.getElementById('wilaya').value;
     const regionGroup = document.getElementById('regionGroup');
     const regionSelect = document.getElementById('region');
-    const err = document.getElementById('wilaya-err');
-
-    if (!wilaya) {
-      regionGroup.style.display = 'none';
-      regionSelect.innerHTML = '<option value="">اختيار</option>';
-      return;
-    }
-
-    err.classList.remove('show');
+    if (!wilaya) { regionGroup.style.display='none'; regionSelect.innerHTML='<option value="">اختيار</option>'; return; }
+    document.getElementById('wilaya-err').classList.remove('show');
     regionSelect.innerHTML = '<option value="">جاري التحميل...</option>';
     regionGroup.style.display = 'block';
-
     try {
       const col = WILAYA_COLUMNS[wilaya];
-      const url = GOOGLE_SCRIPT_URL + '?action=getRegions&column=' + encodeURIComponent(col);
-      const response = await fetch(url);
-      const regions = await response.json();
-
+      const res = await fetch(GOOGLE_SCRIPT_URL+'?action=getRegions&column='+encodeURIComponent(col));
+      const regions = await res.json();
       regionSelect.innerHTML = '<option value="">اختيار</option>';
-      regions.forEach(function(r) {
+      regions.forEach(r => {
         if (r && r.toString().trim()) {
-          const opt = document.createElement('option');
-          opt.value = r.toString().trim();
-          opt.textContent = r.toString().trim();
-          regionSelect.appendChild(opt);
+          const o = document.createElement('option');
+          o.value = o.textContent = r.toString().trim();
+          regionSelect.appendChild(o);
         }
       });
-    } catch (e) {
-      regionSelect.innerHTML = '<option value="">خطأ في التحميل</option>';
-    }
+    } catch(e) { regionSelect.innerHTML='<option value="">خطأ في التحميل</option>'; }
   }
 
   async function checkPhoneAndGo() {
     if (!validateStep(2)) return;
-
     const phone = document.getElementById('phone').value.trim();
     const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
-
     document.getElementById('loadingText').textContent = 'جاري التحقق من رقم الهاتف...';
     document.getElementById('loadingOverlay').classList.add('show');
-
     try {
-      const url = GOOGLE_SCRIPT_URL + '?action=checkPhone&phone=' + encodeURIComponent(phone);
-      const response = await fetch(url);
-      const result = await response.json();
-
+      const res = await fetch(GOOGLE_SCRIPT_URL+'?action=checkPhone&phone='+encodeURIComponent(phone));
+      const result = await res.json();
       document.getElementById('loadingOverlay').classList.remove('show');
       document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-
-      if (result.exists) {
-        alert('تم تسجيل طلبك مسبقاً');
-      } else {
-        if (hasLicense === 'لا') {
-          skippedLicense = true;
-          document.getElementById('dot3').classList.add('done');
-          goStep(4);
-        } else {
-          skippedLicense = false;
-          goStep(3);
-        }
+      if (result.exists) { alert('تم تسجيل طلبك مسبقاً'); }
+      else {
+        if (hasLicense === 'لا') { skippedLicense=true; document.getElementById('dot3').classList.add('done'); goStep(4); }
+        else { skippedLicense=false; goStep(3); }
       }
-    } catch (e) {
+    } catch(e) {
       document.getElementById('loadingOverlay').classList.remove('show');
       document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
       alert('حدث خطأ في التحقق من رقم الهاتف');
     }
   }
 
-  function goBackFromStep4() {
-    if (skippedLicense) goStep(2);
-    else goStep(3);
-  }
+  function goBackFromStep4() { goStep(skippedLicense ? 2 : 3); }
 
   function goStep(step) {
     if (step > currentStep && !validateStep(currentStep)) return;
-
-    if (currentStep === 2 && step === 4)
-      document.getElementById('dot3').classList.add('done');
-
-    document.getElementById('step' + currentStep).classList.remove('active');
-    document.getElementById('dot' + currentStep).classList.remove('active');
-    document.getElementById('dot' + currentStep).classList.add('done');
-
+    if (currentStep===2 && step===4) document.getElementById('dot3').classList.add('done');
+    document.getElementById('step'+currentStep).classList.remove('active');
+    document.getElementById('dot'+currentStep).classList.remove('active');
+    document.getElementById('dot'+currentStep).classList.add('done');
     currentStep = step;
-    document.getElementById('step' + currentStep).classList.add('active');
-    document.getElementById('dot' + currentStep).classList.remove('done');
-    document.getElementById('dot' + currentStep).classList.add('active');
-    window.scrollTo(0, 0);
+    document.getElementById('step'+currentStep).classList.add('active');
+    document.getElementById('dot'+currentStep).classList.remove('done');
+    document.getElementById('dot'+currentStep).classList.add('active');
+    window.scrollTo(0,0);
   }
 
   function validateStep(step) {
     let valid = true;
-
-    if (step === 1) {
-      valid = checkField('wilaya', v => v !== '') && valid;
-      valid = checkField('region', v => v !== '') && valid;
+    if (step===1) {
+      valid = checkField('wilaya', v=>v!=='') && valid;
+      valid = checkField('region', v=>v!=='') && valid;
     }
-    if (step === 2) {
-      valid = checkField('phone', v => v.trim().length >= 8) && valid;
-      valid = checkField('fullName', v => v.trim().length >= 5) && valid;
-      valid = checkField('civilId', v => v.trim().length >= 7) && valid;
+    if (step===2) {
+      valid = checkField('phone', v=>v.trim().length>=8) && valid;
+      valid = checkField('fullName', v=>v.trim().length>=5) && valid;
+      valid = checkField('civilId', v=>v.trim().length>=7) && valid;
       const licVal = document.querySelector('input[name="hasLicense"]:checked');
       const licErr = document.getElementById('hasLicense-err');
-      if (!licVal) { licErr.classList.add('show'); valid = false; }
-      else licErr.classList.remove('show');
+      if (!licVal) { licErr.classList.add('show'); valid=false; } else licErr.classList.remove('show');
     }
-    if (step === 3) {
-      valid = checkField('licenseNum', v => v.trim().length >= 3) && valid;
-      valid = checkField('licenseExpiry', v => v.trim() !== '') && valid;
+    if (step===3) {
+      valid = checkField('licenseNum', v=>v.trim().length>=3) && valid;
+      valid = checkField('licenseExpiry', v=>v.trim()!=='') && valid;
     }
-    if (step === 4) {
-      valid = checkField('goats', v => v !== '') && valid;
-      valid = checkField('sheep', v => v !== '') && valid;
-      valid = checkField('cows', v => v !== '') && valid;
+    if (step===4) {
+      valid = checkField('goats', v=>v!=='') && valid;
+      valid = checkField('sheep', v=>v!=='') && valid;
+      valid = checkField('cows', v=>v!=='') && valid;
     }
     return valid;
   }
 
   function checkField(id, condition) {
-    const el = document.getElementById(id);
-    const err = document.getElementById(id + '-err');
+    const el=document.getElementById(id), err=document.getElementById(id+'-err');
     if (!el) return true;
-    if (!condition(el.value)) {
-      el.classList.add('error');
-      if (err) err.classList.add('show');
-      return false;
-    } else {
-      el.classList.remove('error');
-      if (err) err.classList.remove('show');
-      return true;
-    }
+    if (!condition(el.value)) { el.classList.add('error'); if(err) err.classList.add('show'); return false; }
+    else { el.classList.remove('error'); if(err) err.classList.remove('show'); return true; }
   }
 
   function clearForm() {
     if (confirm('هل تريد محو جميع البيانات المدخلة؟')) {
-      document.querySelectorAll('input[type="text"], input[type="tel"], input[type="number"], input[type="date"], select').forEach(el => el.value = '');
-      document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
-      document.getElementById('regionGroup').style.display = 'none';
-      document.getElementById('region').innerHTML = '<option value="">اختيار</option>';
-      document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
-      document.querySelectorAll('input.error, select.error').forEach(e => e.classList.remove('error'));
+      document.querySelectorAll('input[type="text"],input[type="tel"],input[type="number"],input[type="date"],select').forEach(el=>el.value='');
+      document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);
+      document.getElementById('regionGroup').style.display='none';
+      document.getElementById('region').innerHTML='<option value="">اختيار</option>';
+      document.querySelectorAll('.error-msg').forEach(e=>e.classList.remove('show'));
+      document.querySelectorAll('input.error,select.error').forEach(e=>e.classList.remove('error'));
     }
   }
 
   function resetForm() {
     document.getElementById('successScreen').classList.remove('show');
-    document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('active','done'));
-    currentStep = 1;
-    skippedLicense = false;
+    document.querySelectorAll('.step-page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.step-dot').forEach(d=>d.classList.remove('active','done'));
+    currentStep=1; skippedLicense=false;
     document.getElementById('step1').classList.add('active');
     document.getElementById('dot1').classList.add('active');
     clearForm();
-    document.getElementById('submitBtn').disabled = false;
-    window.scrollTo(0, 0);
+    document.getElementById('submitBtn').disabled=false;
+    window.scrollTo(0,0);
   }
 
   async function submitForm() {
     if (!validateStep(4)) return;
-
     const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
-    const skipLicense = (hasLicense === 'لا');
-
+    const skipLicense = (hasLicense==='لا');
     const data = {
       wilaya: document.getElementById('wilaya').value,
       phone: document.getElementById('phone').value,
       fullName: document.getElementById('fullName').value,
       civilId: document.getElementById('civilId').value,
       region: document.getElementById('region').value,
-      licenseNum: skipLicense ? '' : document.getElementById('licenseNum').value,
-      licenseExpiry: skipLicense ? '' : document.getElementById('licenseExpiry').value,
+      licenseNum: skipLicense?'':document.getElementById('licenseNum').value,
+      licenseExpiry: skipLicense?'':document.getElementById('licenseExpiry').value,
       goats: document.getElementById('goats').value,
       sheep: document.getElementById('sheep').value,
       cows: document.getElementById('cows').value,
-      empty1: '', empty2: '', empty3: '', empty4: '',
+      empty1:'',empty2:'',empty3:'',empty4:'',
       dateOnly: new Date().toISOString().split('T')[0],
     };
-
-    document.getElementById('loadingText').textContent = 'جارٍ إرسال البيانات...';
+    document.getElementById('loadingText').textContent='جارٍ إرسال البيانات...';
     document.getElementById('loadingOverlay').classList.add('show');
-    document.getElementById('submitBtn').disabled = true;
-
+    document.getElementById('submitBtn').disabled=true;
     try {
       const formData = new FormData();
-      Object.keys(data).forEach(key => formData.append(key, data[key]));
-
-      await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: formData });
-
+      Object.keys(data).forEach(k=>formData.append(k,data[k]));
+      await fetch(GOOGLE_SCRIPT_URL,{method:'POST',mode:'no-cors',body:formData});
       document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-      document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
+      document.getElementById('loadingText').textContent='جارٍ التحميل...';
+      document.querySelectorAll('.step-page').forEach(p=>p.classList.remove('active'));
       document.getElementById('successScreen').classList.add('show');
-
-    } catch (err) {
+    } catch(err) {
       document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('loadingText').textContent='جارٍ التحميل...';
+      document.getElementById('submitBtn').disabled=false;
       alert('حدث خطأ في الإرسال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى.');
     }
   }
+
+  // ============================================================
+  //  تهيئة الصفحة
+  // ============================================================
+  applyFormState();
 </script>
 </body>
 </html>
