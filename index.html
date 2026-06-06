@@ -14,6 +14,102 @@
     min-height: 100vh;
   }
 
+  /* ========== شاشة كلمة المرور ========== */
+  #lockScreen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  .lock-card {
+    background: white;
+    border-radius: 12px;
+    padding: 40px 35px;
+    width: 340px;
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .lock-icon { font-size: 52px; margin-bottom: 12px; }
+
+  .lock-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1a5c38;
+    margin-bottom: 6px;
+  }
+
+  .lock-subtitle {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 24px;
+  }
+
+  .lock-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 6px;
+    font-family: monospace;
+    direction: ltr;
+    transition: border-color 0.2s;
+    margin-bottom: 14px;
+  }
+
+  .lock-input:focus {
+    outline: none;
+    border-color: #2d6a4f;
+    box-shadow: 0 0 0 3px rgba(45,106,79,0.15);
+  }
+
+  .lock-input.shake {
+    animation: shake 0.4s ease;
+    border-color: #e74c3c;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+
+  .lock-error {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-bottom: 12px;
+    min-height: 18px;
+    transition: opacity 0.2s;
+  }
+
+  .btn-unlock {
+    width: 100%;
+    padding: 12px;
+    background: #2d6a4f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+
+  .btn-unlock:hover { background: #1a5c38; }
+
+  /* ========== المحتوى الرئيسي ========== */
+  #mainContent { display: none; }
+
   .header {
     background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
     padding: 0;
@@ -30,10 +126,7 @@
     margin: 0 auto;
   }
 
-  .header-text {
-    color: white;
-    text-align: right;
-  }
+  .header-text { color: white; text-align: right; }
 
   .header-text h2 {
     font-size: 16px;
@@ -87,10 +180,7 @@
     margin-bottom: 8px;
   }
 
-  .required-note {
-    color: #e74c3c;
-    font-size: 12px;
-  }
+  .required-note { color: #e74c3c; font-size: 12px; }
 
   .step-indicator {
     display: flex;
@@ -112,9 +202,7 @@
   .step-dot.active { background: #2d6a4f; }
   .step-dot.done { background: #5cb85c; }
 
-  .section {
-    padding: 20px 25px;
-  }
+  .section { padding: 20px 25px; }
 
   .section-header {
     background: #3a3a4a;
@@ -123,17 +211,11 @@
     font-size: 14px;
     font-weight: bold;
     margin: -20px -25px 20px;
-    border-radius: 0;
   }
 
-  .section-header.info {
-    background: #d4e8ff;
-    color: #1a4a8a;
-  }
+  .section-header.info { background: #d4e8ff; color: #1a4a8a; }
 
-  .field-group {
-    margin-bottom: 20px;
-  }
+  .field-group { margin-bottom: 20px; }
 
   .field-label {
     display: block;
@@ -143,10 +225,7 @@
     margin-bottom: 6px;
   }
 
-  .field-label .req {
-    color: #e74c3c;
-    margin-right: 2px;
-  }
+  .field-label .req { color: #e74c3c; margin-right: 2px; }
 
   .field-hint {
     font-size: 12px;
@@ -181,24 +260,12 @@
     box-shadow: 0 0 0 2px rgba(45,106,79,0.15);
   }
 
-  input.error, select.error {
-    border-color: #e74c3c;
-  }
+  input.error, select.error { border-color: #e74c3c; }
 
-  .error-msg {
-    color: #e74c3c;
-    font-size: 12px;
-    margin-top: 4px;
-    display: none;
-  }
-
+  .error-msg { color: #e74c3c; font-size: 12px; margin-top: 4px; display: none; }
   .error-msg.show { display: block; }
 
-  .radio-group {
-    display: flex;
-    gap: 20px;
-    margin-top: 6px;
-  }
+  .radio-group { display: flex; gap: 20px; margin-top: 6px; }
 
   .radio-option {
     display: flex;
@@ -237,51 +304,20 @@
     transition: all 0.2s;
   }
 
-  .btn-next {
-    background: #2d6a4f;
-    color: white;
-  }
-
+  .btn-next { background: #2d6a4f; color: white; }
   .btn-next:hover { background: #1a5c38; }
-
-  .btn-back {
-    background: white;
-    color: #333;
-    border: 1px solid #ccc;
-  }
-
+  .btn-back { background: white; color: #333; border: 1px solid #ccc; }
   .btn-back:hover { background: #f0f0f0; }
-
-  .btn-submit {
-    background: #2d6a4f;
-    color: white;
-    padding: 12px 35px;
-  }
-
+  .btn-submit { background: #2d6a4f; color: white; padding: 12px 35px; }
   .btn-submit:hover { background: #1a5c38; }
-
-  .btn-submit:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-
-  .btn-clear {
-    background: #888;
-    color: white;
-    padding: 10px 20px;
-  }
-
+  .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+  .btn-clear { background: #888; color: white; padding: 10px 20px; }
   .btn-clear:hover { background: #666; }
 
   .step-page { display: none; }
   .step-page.active { display: block; }
 
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 40px 25px;
-  }
-
+  .success-screen { display: none; text-align: center; padding: 40px 25px; }
   .success-screen.show { display: block; }
   .success-icon { font-size: 60px; margin-bottom: 15px; }
   .success-title { font-size: 22px; font-weight: bold; color: #2d6a4f; margin-bottom: 10px; }
@@ -302,6 +338,7 @@
   }
 
   .loading-overlay.show { display: flex; }
+
   .spinner {
     width: 50px;
     height: 50px;
@@ -334,6 +371,29 @@
 <base target="_blank">
 </head>
 <body>
+
+<!-- ========== شاشة القفل ========== -->
+<div id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">النموذج متوقف مؤقتاً</div>
+    <div class="lock-subtitle">للموظفين فقط — أدخل كلمة المرور للمتابعة</div>
+    <input
+      class="lock-input"
+      type="password"
+      id="pwdInput"
+      placeholder="● ● ● ●"
+      maxlength="20"
+      onkeydown="if(event.key==='Enter') unlock()"
+      autocomplete="off"
+    >
+    <div class="lock-error" id="lockError"></div>
+    <button class="btn-unlock" onclick="unlock()">دخول</button>
+  </div>
+</div>
+
+<!-- ========== المحتوى الرئيسي ========== -->
+<div id="mainContent">
 
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
@@ -375,7 +435,7 @@
       <div class="step-dot" id="dot4"></div>
     </div>
 
-    <!-- ========== STEP 1 (الولاية والمنطقة) ========== -->
+    <!-- STEP 1 -->
     <div class="step-page active" id="step1">
       <div class="section">
         <div class="section-header info">اختيار الولاية والمنطقة</div>
@@ -401,7 +461,6 @@
           </select>
           <div class="error-msg" id="region-err">الرجاء اختيار المنطقة</div>
         </div>
-
       </div>
       <div class="btn-row">
         <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
@@ -409,10 +468,9 @@
       </div>
     </div>
 
-    <!-- ========== STEP 2 (بيانات المربي) ========== -->
+    <!-- STEP 2 -->
     <div class="step-page" id="step2">
       <div class="section">
-
         <div class="field-group">
           <label class="field-label">رقم الهاتف <span class="req">*</span></label>
           <div class="field-hint">يجب إدخال رقم هاتف صحيح ليتمكن فريق التحصين من التواصل معك. في حال إدخال رقم غير صحيح، سيتم إلغاء الطلب.</div>
@@ -437,16 +495,11 @@
         <div class="field-group">
           <label class="field-label">هل تمتلك حيازة حيوانية مسجلة؟ <span class="req">*</span></label>
           <div class="radio-group" id="hasLicense">
-            <label class="radio-option">
-              <input type="radio" name="hasLicense" value="نعم"> نعم
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="hasLicense" value="لا"> لا
-            </label>
+            <label class="radio-option"><input type="radio" name="hasLicense" value="نعم"> نعم</label>
+            <label class="radio-option"><input type="radio" name="hasLicense" value="لا"> لا</label>
           </div>
           <div class="error-msg" id="hasLicense-err">الرجاء اختيار إجابة</div>
         </div>
-
       </div>
       <div class="btn-row">
         <button class="btn btn-back" onclick="goStep(1)">رجوع</button>
@@ -455,7 +508,7 @@
       </div>
     </div>
 
-    <!-- ========== STEP 3 (بيانات الحيازة) ========== -->
+    <!-- STEP 3 -->
     <div class="step-page" id="step3">
       <div class="section">
         <div class="section-header info">يرجى استكمال البيانات أثناء قبل المتابعة.</div>
@@ -473,7 +526,6 @@
           <input type="date" id="licenseExpiry">
           <div class="error-msg" id="licenseExpiry-err">الرجاء إدخال تاريخ انتهاء الحيازة</div>
         </div>
-
       </div>
       <div class="btn-row">
         <button class="btn btn-back" onclick="goStep(2)">رجوع</button>
@@ -482,7 +534,7 @@
       </div>
     </div>
 
-    <!-- ========== STEP 4 (بيانات الحيوانات) ========== -->
+    <!-- STEP 4 -->
     <div class="step-page" id="step4">
       <div class="section">
         <div class="section-header" style="background:#555;color:white;">تأمل منكم استكمال البيانات المطلوبة لإتمام الإجراء.</div>
@@ -504,7 +556,6 @@
           <input type="number" id="cows" placeholder="إدخالك" min="0" value="">
           <div class="error-msg" id="cows-err">الرجاء إدخال عدد الأبقار</div>
         </div>
-
       </div>
       <div class="btn-row">
         <button class="btn btn-back" onclick="goBackFromStep4()">رجوع</button>
@@ -513,7 +564,7 @@
       </div>
     </div>
 
-    <!-- ========== SUCCESS ========== -->
+    <!-- SUCCESS -->
     <div class="success-screen" id="successScreen">
       <div class="success-icon">✅</div>
       <div class="success-title">تم إرسال طلبك بنجاح!</div>
@@ -527,16 +578,35 @@
   </div>
 </div>
 
+</div><!-- end mainContent -->
+
 <script>
+  // ========== القفل ==========
+  const CORRECT_PASSWORD = "1234";
+
+  function unlock() {
+    const val = document.getElementById('pwdInput').value;
+    const errEl = document.getElementById('lockError');
+    const input = document.getElementById('pwdInput');
+
+    if (val === CORRECT_PASSWORD) {
+      document.getElementById('lockScreen').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+    } else {
+      errEl.textContent = 'كلمة المرور غير صحيحة، حاول مجدداً';
+      input.value = '';
+      input.classList.add('shake');
+      setTimeout(() => input.classList.remove('shake'), 500);
+      input.focus();
+    }
+  }
+
+  // ========== النموذج ==========
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFa7UQnzSDH3xDMalSuWswXB_kZ3hoY8mqnBc17CpA_Scam1TkbOnvdpDa9hYw3sK53g/exec";
 
   const WILAYA_COLUMNS = {
-    "السويق": "A",
-    "الخابورة": "B",
-    "صحم": "C",
-    "صحار": "D",
-    "لوى": "E",
-    "شناص": "F"
+    "السويق": "A", "الخابورة": "B", "صحم": "C",
+    "صحار": "D", "لوى": "E", "شناص": "F"
   };
 
   let currentStep = 1;
@@ -575,21 +645,14 @@
       });
     } catch (e) {
       regionSelect.innerHTML = '<option value="">خطأ في التحميل</option>';
-      console.error('Error loading regions:', e);
     }
   }
 
-  // ── التحقق من رقم الهاتف + تحديد الانتقال حسب إجابة الحيازة ──
   async function checkPhoneAndGo() {
     if (!validateStep(2)) return;
 
     const phone = document.getElementById('phone').value.trim();
     const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
-
-    if (!phone) {
-      showFieldError('phone', 'الرجاء إدخال رقم الهاتف');
-      return;
-    }
 
     document.getElementById('loadingText').textContent = 'جاري التحقق من رقم الهاتف...';
     document.getElementById('loadingOverlay').classList.add('show');
@@ -605,10 +668,8 @@
       if (result.exists) {
         alert('تم تسجيل طلبك مسبقاً');
       } else {
-        // تحديد الانتقال حسب إجابة الحيازة
         if (hasLicense === 'لا') {
           skippedLicense = true;
-          // تحديث النقطة 3 كـ "done" لأنها تم تخطيها
           document.getElementById('dot3').classList.add('done');
           goStep(4);
         } else {
@@ -619,27 +680,20 @@
     } catch (e) {
       document.getElementById('loadingOverlay').classList.remove('show');
       document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-      console.error('Error checking phone:', e);
       alert('حدث خطأ في التحقق من رقم الهاتف');
     }
   }
 
-  // ── الرجوع من الخطوة 4 يحترم التجاوز ──
   function goBackFromStep4() {
-    if (skippedLicense) {
-      goStep(2);
-    } else {
-      goStep(3);
-    }
+    if (skippedLicense) goStep(2);
+    else goStep(3);
   }
 
   function goStep(step) {
     if (step > currentStep && !validateStep(currentStep)) return;
 
-    // إذا انتقلنا من 2 إلى 4 (تجاوز الخطوة 3)، نحدث النقطة 3 كـ "done"
-    if (currentStep === 2 && step === 4) {
+    if (currentStep === 2 && step === 4)
       document.getElementById('dot3').classList.add('done');
-    }
 
     document.getElementById('step' + currentStep).classList.remove('active');
     document.getElementById('dot' + currentStep).classList.remove('active');
@@ -659,7 +713,6 @@
       valid = checkField('wilaya', v => v !== '') && valid;
       valid = checkField('region', v => v !== '') && valid;
     }
-
     if (step === 2) {
       valid = checkField('phone', v => v.trim().length >= 8) && valid;
       valid = checkField('fullName', v => v.trim().length >= 5) && valid;
@@ -667,20 +720,17 @@
       const licVal = document.querySelector('input[name="hasLicense"]:checked');
       const licErr = document.getElementById('hasLicense-err');
       if (!licVal) { licErr.classList.add('show'); valid = false; }
-      else { licErr.classList.remove('show'); }
+      else licErr.classList.remove('show');
     }
-
     if (step === 3) {
       valid = checkField('licenseNum', v => v.trim().length >= 3) && valid;
       valid = checkField('licenseExpiry', v => v.trim() !== '') && valid;
     }
-
     if (step === 4) {
       valid = checkField('goats', v => v !== '') && valid;
       valid = checkField('sheep', v => v !== '') && valid;
       valid = checkField('cows', v => v !== '') && valid;
     }
-
     return valid;
   }
 
@@ -699,16 +749,6 @@
     }
   }
 
-  function showFieldError(id, msg) {
-    const el = document.getElementById(id);
-    const err = document.getElementById(id + '-err');
-    if (el) el.classList.add('error');
-    if (err) {
-      err.textContent = msg;
-      err.classList.add('show');
-    }
-  }
-
   function clearForm() {
     if (confirm('هل تريد محو جميع البيانات المدخلة؟')) {
       document.querySelectorAll('input[type="text"], input[type="tel"], input[type="number"], input[type="date"], select').forEach(el => el.value = '');
@@ -723,7 +763,7 @@
   function resetForm() {
     document.getElementById('successScreen').classList.remove('show');
     document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.step-dot').forEach(d => { d.classList.remove('active','done'); });
+    document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('active','done'));
     currentStep = 1;
     skippedLicense = false;
     document.getElementById('step1').classList.add('active');
@@ -750,10 +790,7 @@
       goats: document.getElementById('goats').value,
       sheep: document.getElementById('sheep').value,
       cows: document.getElementById('cows').value,
-      empty1: '',
-      empty2: '',
-      empty3: '',
-      empty4: '',
+      empty1: '', empty2: '', empty3: '', empty4: '',
       dateOnly: new Date().toISOString().split('T')[0],
     };
 
@@ -765,11 +802,7 @@
       const formData = new FormData();
       Object.keys(data).forEach(key => formData.append(key, data[key]));
 
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: formData
-      });
+      await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: formData });
 
       document.getElementById('loadingOverlay').classList.remove('show');
       document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
