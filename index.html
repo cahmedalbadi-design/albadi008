@@ -223,6 +223,7 @@
     background: #f8f8f8;
     border-top: 1px solid #e0e0e0;
     gap: 10px;
+    flex-wrap: wrap;
   }
 
   .btn {
@@ -330,6 +331,7 @@
 
   .emblem svg { width: 45px; height: 45px; }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -401,10 +403,11 @@
         </div>
 
       </div>
-      <div class="btn-row">
-        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-        <button class="btn btn-next" onclick="goStep(2)">التالي</button>
-      </div>
+ <div class="btn-row">
+  <button class="btn btn-back" onclick="goStep(1)">رجوع</button>
+  <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+  <button class="btn btn-next" onclick="checkPhoneAndGo()">التالي</button>
+    </div>
     </div>
 
     <!-- ========== STEP 2 (بيانات المربي) ========== -->
@@ -446,10 +449,11 @@
         </div>
 
       </div>
-      <div class="btn-row">
-        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-        <button class="btn btn-next" onclick="checkPhoneAndGo()">التالي</button>
-      </div>
+  <div class="btn-row">
+  <button class="btn btn-back" onclick="goStep(2)">رجوع</button>
+  <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+  <button class="btn btn-next" onclick="goStep(4)">التالي</button>
+  </div>
     </div>
 
     <!-- ========== STEP 3 (بيانات الحيازة) ========== -->
@@ -472,10 +476,11 @@
         </div>
 
       </div>
-      <div class="btn-row">
-        <button class="btn btn-back" onclick="goStep(2)">رجوع</button>
-        <button class="btn btn-next" onclick="goStep(4)">التالي</button>
-      </div>
+<div class="btn-row">
+  <button class="btn btn-back" onclick="goBackFromStep4()">رجوع</button>
+  <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+  <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">إرسال</button>
+</div>
     </div>
 
     <!-- ========== STEP 4 (بيانات الحيوانات) ========== -->
@@ -503,7 +508,7 @@
 
       </div>
       <div class="btn-row">
-        <button class="btn btn-back" onclick="goStep(3)">رجوع</button>
+        <button class="btn btn-back" onclick="goBackFromStep4()">رجوع</button>
         <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">إرسال</button>
       </div>
     </div>
@@ -535,6 +540,7 @@
   };
 
   let currentStep = 1;
+  let skippedLicense = false; // متغير جديد: هل تم تجاوز الخطوة 3؟
 
   async function onWilayaChange() {
     const wilaya = document.getElementById('wilaya').value;
@@ -573,51 +579,69 @@
     }
   }
 
-  // ── التعديل الجديد: فحص رقم الهاتف قبل الانتقال من الخطوة 2 ──
-async function checkPhoneAndGo() {
-  if (!validateStep(2)) return;
+  // ── التعديل الجديد: فحص رقم الهاتف + تحويل حسب إجابة الحيازة ──
+  async function checkPhoneAndGo() {
+    if (!validateStep(2)) return;
 
-  const phone = document.getElementById('phone').value.trim();
-  const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
+    const phone = document.getElementById('phone').value.trim();
+    const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
 
-  if (!phone) {
-    alert('الرجاء إدخال رقم الهاتف');
-    return;
-  }
-
-  document.getElementById('loadingText').textContent = 'جاري التحقق من رقم الهاتف...';
-  document.getElementById('loadingOverlay').classList.add('show');
-
-  try {
-    const url = GOOGLE_SCRIPT_URL + '?action=checkPhone&phone=' + encodeURIComponent(phone);
-    const response = await fetch(url);
-    const result = await response.json();
-
-    document.getElementById('loadingOverlay').classList.remove('show');
-    document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-
-    if (result.exists) {
-      alert('تم تسجيل طلبك مسبقاً');
-    } else {
-      // ── التعديل الجديد: إذا لا يملك حيازة → إرسال مباشر ──
-      if (hasLicense === 'لا') {
-        submitForm(true); // true = إرسال سريع بدون حيازة
-      } else {
-        goStep(3);
-      }
-      // ───────────────────────────────────────────────────
+    if (!phone) {
+      alert('الرجاء إدخال رقم الهاتف');
+      return;
     }
-  } catch (e) {
-    document.getElementById('loadingOverlay').classList.remove('show');
-    document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-    console.error('Error checking phone:', e);
-    alert('حدث خطأ في التحقق من رقم الهاتف');
+
+    document.getElementById('loadingText').textContent = 'جاري التحقق من رقم الهاتف...';
+    document.getElementById('loadingOverlay').classList.add('show');
+
+    try {
+      const url = GOOGLE_SCRIPT_URL + '?action=checkPhone&phone=' + encodeURIComponent(phone);
+      const response = await fetch(url);
+      const result = await response.json();
+
+      document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+
+      if (result.exists) {
+        alert('تم تسجيل طلبك مسبقاً');
+      } else {
+        // ── التعديل الجديد: تحويل حسب إجابة الحيازة ──
+        if (hasLicense === 'لا') {
+          skippedLicense = true;  // تم تجاوز الخطوة 3
+          goStep(4);              // انتقال مباشر للخطوة 4
+        } else {
+          skippedLicense = false;
+          goStep(3);
+        }
+        // ───────────────────────────────────────────
+      }
+    } catch (e) {
+      document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+      console.error('Error checking phone:', e);
+      alert('حدث خطأ في التحقق من رقم الهاتف');
+    }
   }
-}
   // ───────────────────────────────────────────────────────────
+
+  // ── التعديل الجديد: زر الرجوع من الخطوة 4 يحترم التجاوز ──
+  function goBackFromStep4() {
+    if (skippedLicense) {
+      goStep(2); // إذا تم تجاوز الخطوة 3، ارجع للخطوة 2
+    } else {
+      goStep(3); // وإلا ارجع للخطوة 3 كالمعتاد
+    }
+  }
+  // ─────────────────────────────────────────────────────────
 
   function goStep(step) {
     if (step > currentStep && !validateStep(currentStep)) return;
+
+    // ── التعديل الجديد: إذا انتقلنا من 2 إلى 4، نحدث النقطة 3 كـ "done" ──
+    if (currentStep === 2 && step === 4) {
+      document.getElementById('dot3').classList.add('done');
+    }
+    // ───────────────────────────────────────────────────────────────────
 
     document.getElementById('step' + currentStep).classList.remove('active');
     document.getElementById('dot' + currentStep).classList.remove('active');
@@ -691,59 +715,64 @@ async function checkPhoneAndGo() {
     document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.step-dot').forEach(d => { d.classList.remove('active','done'); });
     currentStep = 1;
+    skippedLicense = false; // ── إعادة تعيين المتغير ──
     document.getElementById('step1').classList.add('active');
     document.getElementById('dot1').classList.add('active');
     clearForm();
+    document.getElementById('submitBtn').disabled = false; // ── تفعيل زر الإرسال ──
     window.scrollTo(0, 0);
   }
 
-async function submitForm(skipLicense = false) {
-  if (!skipLicense && !validateStep(4)) return;
+  async function submitForm() {
+    if (!validateStep(4)) return;
 
-  const data = {
-    wilaya: document.getElementById('wilaya').value,
-    phone: document.getElementById('phone').value,
-    fullName: document.getElementById('fullName').value,
-    civilId: document.getElementById('civilId').value,
-    region: document.getElementById('region').value,
-    licenseNum: skipLicense ? '' : document.getElementById('licenseNum').value,
-    licenseExpiry: skipLicense ? '' : document.getElementById('licenseExpiry').value,
-    goats: document.getElementById('goats').value,
-    sheep: document.getElementById('sheep').value,
-    cows: document.getElementById('cows').value,
-    empty1: '',
-    empty2: '',
-    empty3: '',
-    empty4: '',
-    dateOnly: new Date().toISOString().split('T')[0],
-  };
+    const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
+    const skipLicense = (hasLicense === 'لا');
 
-  document.getElementById('loadingText').textContent = 'جارٍ إرسال البيانات...';
-  document.getElementById('loadingOverlay').classList.add('show');
-  document.getElementById('submitBtn').disabled = true;
+    const data = {
+      wilaya: document.getElementById('wilaya').value,
+      phone: document.getElementById('phone').value,
+      fullName: document.getElementById('fullName').value,
+      civilId: document.getElementById('civilId').value,
+      region: document.getElementById('region').value,
+      licenseNum: skipLicense ? '' : document.getElementById('licenseNum').value,
+      licenseExpiry: skipLicense ? '' : document.getElementById('licenseExpiry').value,
+      goats: document.getElementById('goats').value,
+      sheep: document.getElementById('sheep').value,
+      cows: document.getElementById('cows').value,
+      empty1: '',
+      empty2: '',
+      empty3: '',
+      empty4: '',
+      dateOnly: new Date().toISOString().split('T')[0],
+    };
 
-  try {
-    const formData = new FormData();
-    Object.keys(data).forEach(key => formData.append(key, data[key]));
+    document.getElementById('loadingText').textContent = 'جارٍ إرسال البيانات...';
+    document.getElementById('loadingOverlay').classList.add('show');
+    document.getElementById('submitBtn').disabled = true;
 
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: formData
-    });
+    try {
+      const formData = new FormData();
+      Object.keys(data).forEach(key => formData.append(key, data[key]));
 
-    document.getElementById('loadingOverlay').classList.remove('show');
-    document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-    document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
-    document.getElementById('successScreen').classList.add('show');
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+      });
 
-  } catch (err) {
-    document.getElementById('loadingOverlay').classList.remove('show');
-    document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-    document.getElementById('submitBtn').disabled = false;
-    alert('حدث خطأ في الإرسال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى.');
+      document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+      document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
+      document.getElementById('successScreen').classList.add('show');
+
+    } catch (err) {
+      document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
+      document.getElementById('submitBtn').disabled = false;
+      alert('حدث خطأ في الإرسال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى.');
+    }
   }
-}
 </script>
 </body>
 </html>
