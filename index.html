@@ -59,41 +59,6 @@
     font-size: 14px;
     font-weight: bold;
     letter-spacing: 1px;
-    position: relative;
-  }
-
-  .admin-control {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-  }
-
-  .toggle-btn {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.4);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 15px;
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-family: inherit;
-  }
-
-  .toggle-btn:hover {
-    background: rgba(255,255,255,0.35);
-  }
-
-  .toggle-btn.open {
-    background: #5cb85c;
-    border-color: #5cb85c;
-  }
-
-  .toggle-btn.closed {
-    background: #e74c3c;
-    border-color: #e74c3c;
   }
 
   .main {
@@ -197,7 +162,6 @@
   input[type="tel"],
   input[type="number"],
   input[type="date"],
-  input[type="password"],
   select,
   textarea {
     width: 100%;
@@ -366,97 +330,6 @@
   }
 
   .emblem svg { width: 45px; height: 45px; }
-
-  .closed-overlay {
-    display: none;
-    text-align: center;
-    padding: 60px 25px;
-    background: white;
-    border-radius: 8px;
-  }
-
-  .closed-overlay.show {
-    display: block;
-  }
-
-  .closed-icon {
-    font-size: 80px;
-    margin-bottom: 20px;
-  }
-
-  .closed-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #e74c3c;
-    margin-bottom: 15px;
-  }
-
-  .closed-msg {
-    font-size: 16px;
-    color: #666;
-    line-height: 1.8;
-  }
-
-  .pin-modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .pin-modal.show { display: flex; }
-
-  .pin-box {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 320px;
-    text-align: center;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.3);
-  }
-
-  .pin-box h3 {
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 18px;
-  }
-
-  .pin-box input {
-    width: 100%;
-    padding: 12px;
-    font-size: 18px;
-    text-align: center;
-    letter-spacing: 8px;
-    margin-bottom: 15px;
-    border: 2px solid #ccc;
-    border-radius: 6px;
-  }
-
-  .pin-box .pin-error {
-    color: #e74c3c;
-    font-size: 13px;
-    margin-bottom: 10px;
-    display: none;
-  }
-
-  .pin-box .pin-error.show { display: block; }
-
-  .pin-btns {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-  }
-
-  .pin-btns .btn {
-    padding: 8px 20px;
-    font-size: 13px;
-  }
-
-  .hidden { display: none !important; }
 </style>
 <base target="_blank">
 </head>
@@ -467,26 +340,7 @@
   <span id="loadingText">جارٍ التحميل...</span>
 </div>
 
-<div class="pin-modal" id="pinModal">
-  <div class="pin-box">
-    <h3>🔐 إدارة التسجيل</h3>
-    <div class="field-hint" style="margin-bottom:10px;text-align:center;">أدخل كلمة السر للتحكم في حالة التسجيل</div>
-    <input type="password" id="pinInput" placeholder="••••" maxlength="6">
-    <div class="pin-error" id="pinError">كلمة السر غير صحيحة</div>
-    <div class="pin-btns">
-      <button class="btn btn-clear" onclick="closePinModal()">إلغاء</button>
-      <button class="btn btn-next" onclick="verifyPin()">تأكيد</button>
-    </div>
-  </div>
-</div>
-
-<div class="project-banner">
-  المشروع الوطني للتحصين
-  <div class="admin-control">
-    <button class="toggle-btn open" id="toggleBtn" onclick="openPinModal()">🟢 التسجيل مفتوح</button>
-  </div>
-</div>
-
+<div class="project-banner">المشروع الوطني للتحصين</div>
 <div class="header">
   <div class="header-inner">
     <div class="header-text">
@@ -509,158 +363,167 @@
 
 <div class="main">
   <div class="form-card">
+    <div class="form-title">
+      <h1>تسجل طلبات التحصين بمحافظة شمال الباطنة</h1>
+      <p class="required-note">* تشير إلى أنّ السؤال مطلوب</p>
+    </div>
 
-    <div class="closed-overlay" id="closedOverlay">
-      <div class="closed-icon">🔒</div>
-      <div class="closed-title">التسجيل مغلق حالياً</div>
-      <div class="closed-msg">
-        عذراً، تم إيقاف استقبال طلبات التحصين مؤقتاً.<br>
-        يرجى التواصل مع الإدارة للاستفسار.
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot1"></div>
+      <div class="step-dot" id="dot2"></div>
+      <div class="step-dot" id="dot3"></div>
+      <div class="step-dot" id="dot4"></div>
+    </div>
+
+    <!-- ========== STEP 1 (الولاية والمنطقة) ========== -->
+    <div class="step-page active" id="step1">
+      <div class="section">
+        <div class="section-header info">اختيار الولاية والمنطقة</div>
+
+        <div class="field-group">
+          <label class="field-label">الولاية <span class="req">*</span></label>
+          <select id="wilaya" onchange="onWilayaChange()">
+            <option value="">اختيار</option>
+            <option value="السويق">السويق</option>
+            <option value="الخابورة">الخابورة</option>
+            <option value="صحم">صحم</option>
+            <option value="صحار">صحار</option>
+            <option value="لوى">لوى</option>
+            <option value="شناص">شناص</option>
+          </select>
+          <div class="error-msg" id="wilaya-err">الرجاء اختيار الولاية</div>
+        </div>
+
+        <div class="field-group" id="regionGroup" style="display:none;">
+          <label class="field-label">المنطقة <span class="req">*</span></label>
+          <select id="region">
+            <option value="">اختيار</option>
+          </select>
+          <div class="error-msg" id="region-err">الرجاء اختيار المنطقة</div>
+        </div>
+
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+        <button class="btn btn-next" onclick="goStep(2)">التالي</button>
       </div>
     </div>
 
-    <div id="formContent">
-      <div class="form-title">
-        <h1>تسجل طلبات التحصين بمحافظة شمال الباطنة</h1>
-        <p class="required-note">* تشير إلى أنّ السؤال مطلوب</p>
-      </div>
+    <!-- ========== STEP 2 (بيانات المربي) ========== -->
+    <div class="step-page" id="step2">
+      <div class="section">
 
-      <div class="step-indicator">
-        <div class="step-dot active" id="dot1"></div>
-        <div class="step-dot" id="dot2"></div>
-        <div class="step-dot" id="dot3"></div>
-        <div class="step-dot" id="dot4"></div>
-      </div>
+        <div class="field-group">
+          <label class="field-label">رقم الهاتف <span class="req">*</span></label>
+          <div class="field-hint">يجب إدخال رقم هاتف صحيح ليتمكن فريق التحصين من التواصل معك. في حال إدخال رقم غير صحيح، سيتم إلغاء الطلب.</div>
+          <input type="tel" id="phone" placeholder="إدخالك" maxlength="12">
+          <div class="error-msg" id="phone-err">الرجاء إدخال رقم هاتف صحيح</div>
+        </div>
 
-      <div class="step-page active" id="step1">
-        <div class="section">
-          <div class="section-header info">اختيار الولاية والمنطقة</div>
-          <div class="field-group">
-            <label class="field-label">الولاية <span class="req">*</span></label>
-            <select id="wilaya" onchange="onWilayaChange()">
-              <option value="">اختيار</option>
-              <option value="السويق">السويق</option>
-              <option value="الخابورة">الخابورة</option>
-              <option value="صحم">صحم</option>
-              <option value="صحار">صحار</option>
-              <option value="لوى">لوى</option>
-              <option value="شناص">شناص</option>
-            </select>
-            <div class="error-msg" id="wilaya-err">الرجاء اختيار الولاية</div>
-          </div>
-          <div class="field-group" id="regionGroup" style="display:none;">
-            <label class="field-label">المنطقة <span class="req">*</span></label>
-            <select id="region">
-              <option value="">اختيار</option>
-            </select>
-            <div class="error-msg" id="region-err">الرجاء اختيار المنطقة</div>
-          </div>
+        <div class="field-group">
+          <label class="field-label">اسم المربي الثلاثي <span class="req">*</span></label>
+          <div class="field-hint">مثال: فلان بن / بنت فلان بن فلان القبيلة</div>
+          <input type="text" id="fullName" placeholder="إدخالك">
+          <div class="error-msg" id="fullName-err">الرجاء إدخال الاسم الثلاثي</div>
         </div>
-        <div class="btn-row">
-          <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-          <button class="btn btn-next" onclick="goStep(2)">التالي</button>
-        </div>
-      </div>
 
-      <div class="step-page" id="step2">
-        <div class="section">
-          <div class="field-group">
-            <label class="field-label">رقم الهاتف <span class="req">*</span></label>
-            <div class="field-hint">يجب إدخال رقم هاتف صحيح ليتمكن فريق التحصين من التواصل معك.</div>
-            <input type="tel" id="phone" placeholder="إدخالك" maxlength="12">
-            <div class="error-msg" id="phone-err">الرجاء إدخال رقم هاتف صحيح</div>
-          </div>
-          <div class="field-group">
-            <label class="field-label">اسم المربي الثلاثي <span class="req">*</span></label>
-            <div class="field-hint">مثال: فلان بن / بنت فلان بن فلان القبيلة</div>
-            <input type="text" id="fullName" placeholder="إدخالك">
-            <div class="error-msg" id="fullName-err">الرجاء إدخال الاسم الثلاثي</div>
-          </div>
-          <div class="field-group">
-            <label class="field-label">الرقم المدني <span class="req">*</span></label>
-            <div class="field-hint">أدخل الرقم كاملاً بدون أي فواصل أو رموز إضافية</div>
-            <input type="text" id="civilId" placeholder="إدخالك" maxlength="12">
-            <div class="error-msg" id="civilId-err">الرجاء إدخال الرقم المدني</div>
-          </div>
-          <div class="field-group">
-            <label class="field-label">هل تمتلك حيازة حيوانية مسجلة؟ <span class="req">*</span></label>
-            <div class="radio-group" id="hasLicense">
-              <label class="radio-option">
-                <input type="radio" name="hasLicense" value="نعم"> نعم
-              </label>
-              <label class="radio-option">
-                <input type="radio" name="hasLicense" value="لا"> لا
-              </label>
-            </div>
-            <div class="error-msg" id="hasLicense-err">الرجاء اختيار إجابة</div>
-          </div>
+        <div class="field-group">
+          <label class="field-label">الرقم المدني <span class="req">*</span></label>
+          <div class="field-hint">أدخل الرقم كاملاً بدون أي فواصل أو رموز إضافية</div>
+          <input type="text" id="civilId" placeholder="إدخالك" maxlength="12">
+          <div class="error-msg" id="civilId-err">الرجاء إدخال الرقم المدني</div>
         </div>
-        <div class="btn-row">
-          <button class="btn btn-back" onclick="goStep(1)">رجوع</button>
-          <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-          <button class="btn btn-next" onclick="checkPhoneAndGo()">التالي</button>
-        </div>
-      </div>
 
-      <div class="step-page" id="step3">
-        <div class="section">
-          <div class="section-header info">يرجى استكمال البيانات أثناء قبل المتابعة.</div>
-          <div class="field-group">
-            <label class="field-label">رقم الحيازة الحيوانية <span class="req">*</span></label>
-            <div class="field-hint">في حال عدم امتلاك حيازة حيوانية، يُرجى التواصل عبر رقم الاستفسارات.</div>
-            <input type="text" id="licenseNum" placeholder="إدخالك">
-            <div class="error-msg" id="licenseNum-err">الرجاء إدخال رقم الحيازة</div>
+        <div class="field-group">
+          <label class="field-label">هل تمتلك حيازة حيوانية مسجلة؟ <span class="req">*</span></label>
+          <div class="radio-group" id="hasLicense">
+            <label class="radio-option">
+              <input type="radio" name="hasLicense" value="نعم"> نعم
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="hasLicense" value="لا"> لا
+            </label>
           </div>
-          <div class="field-group">
-            <label class="field-label">تاريخ انتهاء الحيازة الحيوانية <span class="req">*</span></label>
-            <div class="field-hint">لن يتم النظر في الطلب في حال كانت الحيازة منتهية.</div>
-            <input type="date" id="licenseExpiry">
-            <div class="error-msg" id="licenseExpiry-err">الرجاء إدخال تاريخ انتهاء الحيازة</div>
-          </div>
+          <div class="error-msg" id="hasLicense-err">الرجاء اختيار إجابة</div>
         </div>
-        <div class="btn-row">
-          <button class="btn btn-back" onclick="goStep(2)">رجوع</button>
-          <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-          <button class="btn btn-next" onclick="goStep(4)">التالي</button>
-        </div>
-      </div>
 
-      <div class="step-page" id="step4">
-        <div class="section">
-          <div class="section-header" style="background:#555;color:white;">تأمل منكم استكمال البيانات المطلوبة لإتمام الإجراء.</div>
-          <div class="field-group">
-            <label class="field-label">عدد الماعز <span class="req">*</span></label>
-            <input type="number" id="goats" placeholder="إدخالك" min="0" value="">
-            <div class="error-msg" id="goats-err">الرجاء إدخال عدد الماعز</div>
-          </div>
-          <div class="field-group">
-            <label class="field-label">عدد الضأن <span class="req">*</span></label>
-            <input type="number" id="sheep" placeholder="إدخالك" min="0" value="">
-            <div class="error-msg" id="sheep-err">الرجاء إدخال عدد الضأن</div>
-          </div>
-          <div class="field-group">
-            <label class="field-label">عدد الأبقار <span class="req">*</span></label>
-            <input type="number" id="cows" placeholder="إدخالك" min="0" value="">
-            <div class="error-msg" id="cows-err">الرجاء إدخال عدد الأبقار</div>
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-back" onclick="goBackFromStep4()">رجوع</button>
-          <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-          <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">إرسال</button>
-        </div>
       </div>
-
-      <div class="success-screen" id="successScreen">
-        <div class="success-icon">✅</div>
-        <div class="success-title">تم إرسال طلبك بنجاح!</div>
-        <div class="success-msg">
-          شكراً لك. تم تسجيل طلب التحصين الخاص بك.<br>
-          سيتواصل معك فريق التحصين قريباً على رقم الهاتف المسجل.
-        </div>
-        <button class="btn btn-next" style="margin-top:20px;" onclick="resetForm()">تسجيل طلب جديد</button>
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goStep(1)">رجوع</button>
+        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+        <button class="btn btn-next" onclick="checkPhoneAndGo()">التالي</button>
       </div>
     </div>
+
+    <!-- ========== STEP 3 (بيانات الحيازة) ========== -->
+    <div class="step-page" id="step3">
+      <div class="section">
+        <div class="section-header info">يرجى استكمال البيانات أثناء قبل المتابعة.</div>
+
+        <div class="field-group">
+          <label class="field-label">رقم الحيازة الحيوانية <span class="req">*</span></label>
+          <div class="field-hint">في حال عدم امتلاك حيازة حيوانية، يُرجى التواصل عبر رقم الاستفسارات الموضح أعلى الصفحة الرئيسية قبل متابعة عملية التسجيل.</div>
+          <input type="text" id="licenseNum" placeholder="إدخالك">
+          <div class="error-msg" id="licenseNum-err">الرجاء إدخال رقم الحيازة</div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">تاريخ انتهاء الحيازة الحيوانية <span class="req">*</span></label>
+          <div class="field-hint">لن يتم النظر في الطلب في حال كانت الحيازة منتهية. يُرجى التأكد من تجديد الحيازة قبل التسجيل.</div>
+          <input type="date" id="licenseExpiry">
+          <div class="error-msg" id="licenseExpiry-err">الرجاء إدخال تاريخ انتهاء الحيازة</div>
+        </div>
+
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goStep(2)">رجوع</button>
+        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+        <button class="btn btn-next" onclick="goStep(4)">التالي</button>
+      </div>
+    </div>
+
+    <!-- ========== STEP 4 (بيانات الحيوانات) ========== -->
+    <div class="step-page" id="step4">
+      <div class="section">
+        <div class="section-header" style="background:#555;color:white;">تأمل منكم استكمال البيانات المطلوبة لإتمام الإجراء.</div>
+
+        <div class="field-group">
+          <label class="field-label">عدد الماعز <span class="req">*</span></label>
+          <input type="number" id="goats" placeholder="إدخالك" min="0" value="">
+          <div class="error-msg" id="goats-err">الرجاء إدخال عدد الماعز</div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">عدد الضأن <span class="req">*</span></label>
+          <input type="number" id="sheep" placeholder="إدخالك" min="0" value="">
+          <div class="error-msg" id="sheep-err">الرجاء إدخال عدد الضأن</div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">عدد الأبقار <span class="req">*</span></label>
+          <input type="number" id="cows" placeholder="إدخالك" min="0" value="">
+          <div class="error-msg" id="cows-err">الرجاء إدخال عدد الأبقار</div>
+        </div>
+
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goBackFromStep4()">رجوع</button>
+        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+        <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">إرسال</button>
+      </div>
+    </div>
+
+    <!-- ========== SUCCESS ========== -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✅</div>
+      <div class="success-title">تم إرسال طلبك بنجاح!</div>
+      <div class="success-msg">
+        شكراً لك. تم تسجيل طلب التحصين الخاص بك.<br>
+        سيتواصل معك فريق التحصين قريباً على رقم الهاتف المسجل.
+      </div>
+      <button class="btn btn-next" style="margin-top:20px;" onclick="resetForm()">تسجيل طلب جديد</button>
+    </div>
+
   </div>
 </div>
 
@@ -679,95 +542,6 @@
   let currentStep = 1;
   let skippedLicense = false;
 
-  /* ── نظام التحكم في التسجيل (مزامنة عبر GAS) ── */
-  async function initRegistrationControl() {
-    try {
-      const url = GOOGLE_SCRIPT_URL + '?action=getRegistrationStatus';
-      const response = await fetch(url);
-      const result = await response.json();
-      updateRegistrationUI(result.status === 'CLOSED');
-    } catch (e) {
-      console.error('Error loading status:', e);
-      // افتراضياً مفتوح إذا فشل الاتصال
-      updateRegistrationUI(false);
-    }
-  }
-
-  function openPinModal() {
-    document.getElementById('pinModal').classList.add('show');
-    document.getElementById('pinInput').value = '';
-    document.getElementById('pinError').classList.remove('show');
-    setTimeout(() => document.getElementById('pinInput').focus(), 100);
-  }
-
-  function closePinModal() {
-    document.getElementById('pinModal').classList.remove('show');
-  }
-
-  async function verifyPin() {
-    const pin = document.getElementById('pinInput').value.trim();
-    if (!pin) {
-      document.getElementById('pinError').classList.add('show');
-      return;
-    }
-
-    document.getElementById('loadingText').textContent = 'جاري التحقق...';
-    document.getElementById('loadingOverlay').classList.add('show');
-
-    try {
-      const url = GOOGLE_SCRIPT_URL + '?action=toggleRegistration&pin=' + encodeURIComponent(pin);
-      const response = await fetch(url);
-      const result = await response.json();
-
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-
-      if (result.success) {
-        closePinModal();
-        updateRegistrationUI(result.status === 'CLOSED');
-      } else {
-        document.getElementById('pinError').classList.add('show');
-        document.getElementById('pinInput').value = '';
-        document.getElementById('pinInput').focus();
-      }
-    } catch (e) {
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('loadingText').textContent = 'جارٍ التحميل...';
-      alert('حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.');
-    }
-  }
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closePinModal();
-    if (e.key === 'Enter' && document.getElementById('pinModal').classList.contains('show')) {
-      verifyPin();
-    }
-  });
-
-  function updateRegistrationUI(isClosed) {
-    const btn = document.getElementById('toggleBtn');
-    const formContent = document.getElementById('formContent');
-    const closedOverlay = document.getElementById('closedOverlay');
-
-    if (isClosed) {
-      btn.classList.remove('open');
-      btn.classList.add('closed');
-      btn.innerHTML = '🔴 التسجيل مغلق';
-      formContent.classList.add('hidden');
-      closedOverlay.classList.add('show');
-    } else {
-      btn.classList.remove('closed');
-      btn.classList.add('open');
-      btn.innerHTML = '🟢 التسجيل مفتوح';
-      formContent.classList.remove('hidden');
-      closedOverlay.classList.remove('show');
-    }
-  }
-
-  // تشغيل عند تحميل الصفحة
-  initRegistrationControl();
-
-  /* ── الدوال الأصلية ── */
   async function onWilayaChange() {
     const wilaya = document.getElementById('wilaya').value;
     const regionGroup = document.getElementById('regionGroup');
@@ -805,6 +579,7 @@
     }
   }
 
+  // ── التحقق من رقم الهاتف + تحديد الانتقال حسب إجابة الحيازة ──
   async function checkPhoneAndGo() {
     if (!validateStep(2)) return;
 
@@ -830,8 +605,10 @@
       if (result.exists) {
         alert('تم تسجيل طلبك مسبقاً');
       } else {
+        // تحديد الانتقال حسب إجابة الحيازة
         if (hasLicense === 'لا') {
           skippedLicense = true;
+          // تحديث النقطة 3 كـ "done" لأنها تم تخطيها
           document.getElementById('dot3').classList.add('done');
           goStep(4);
         } else {
@@ -847,6 +624,7 @@
     }
   }
 
+  // ── الرجوع من الخطوة 4 يحترم التجاوز ──
   function goBackFromStep4() {
     if (skippedLicense) {
       goStep(2);
@@ -858,6 +636,7 @@
   function goStep(step) {
     if (step > currentStep && !validateStep(currentStep)) return;
 
+    // إذا انتقلنا من 2 إلى 4 (تجاوز الخطوة 3)، نحدث النقطة 3 كـ "done"
     if (currentStep === 2 && step === 4) {
       document.getElementById('dot3').classList.add('done');
     }
