@@ -403,10 +403,10 @@
         </div>
 
       </div>
- <div class="btn-row">
-  <button class="btn btn-next" onclick="checkPhoneAndGo()">التالي</button>
-  <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-    </div>
+      <div class="btn-row">
+        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+        <button class="btn btn-next" onclick="goStep(2)">التالي</button>
+      </div>
     </div>
 
     <!-- ========== STEP 2 (بيانات المربي) ========== -->
@@ -448,11 +448,11 @@
         </div>
 
       </div>
-  <div class="btn-row">
-  <button class="btn btn-back" onclick="goStep(2)">رجوع</button>
-  <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-  <button class="btn btn-next" onclick="goStep(4)">التالي</button>
-  </div>
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goStep(1)">رجوع</button>
+        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+        <button class="btn btn-next" onclick="checkPhoneAndGo()">التالي</button>
+      </div>
     </div>
 
     <!-- ========== STEP 3 (بيانات الحيازة) ========== -->
@@ -475,11 +475,11 @@
         </div>
 
       </div>
-<div class="btn-row">
-  <button class="btn btn-back" onclick="goBackFromStep4()">رجوع</button>
-  <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
-  <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">إرسال</button>
-</div>
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goStep(2)">رجوع</button>
+        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
+        <button class="btn btn-next" onclick="goStep(4)">التالي</button>
+      </div>
     </div>
 
     <!-- ========== STEP 4 (بيانات الحيوانات) ========== -->
@@ -489,25 +489,26 @@
 
         <div class="field-group">
           <label class="field-label">عدد الماعز <span class="req">*</span></label>
-          <input type="number" id="goats" placeholder="إدخالك" min="" value="">
+          <input type="number" id="goats" placeholder="إدخالك" min="0" value="">
           <div class="error-msg" id="goats-err">الرجاء إدخال عدد الماعز</div>
         </div>
 
         <div class="field-group">
           <label class="field-label">عدد الضأن <span class="req">*</span></label>
-          <input type="number" id="sheep" placeholder="إدخالك" min="" value="">
+          <input type="number" id="sheep" placeholder="إدخالك" min="0" value="">
           <div class="error-msg" id="sheep-err">الرجاء إدخال عدد الضأن</div>
         </div>
 
         <div class="field-group">
           <label class="field-label">عدد الأبقار <span class="req">*</span></label>
-          <input type="number" id="cows" placeholder="إدخالك" min="" value="">
+          <input type="number" id="cows" placeholder="إدخالك" min="0" value="">
           <div class="error-msg" id="cows-err">الرجاء إدخال عدد الأبقار</div>
         </div>
 
       </div>
       <div class="btn-row">
         <button class="btn btn-back" onclick="goBackFromStep4()">رجوع</button>
+        <button class="btn btn-clear" onclick="clearForm()">محو النموذج</button>
         <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">إرسال</button>
       </div>
     </div>
@@ -539,7 +540,7 @@
   };
 
   let currentStep = 1;
-  let skippedLicense = false; // متغير جديد: هل تم تجاوز الخطوة 3؟
+  let skippedLicense = false;
 
   async function onWilayaChange() {
     const wilaya = document.getElementById('wilaya').value;
@@ -578,7 +579,7 @@
     }
   }
 
-  // ── التعديل الجديد: فحص رقم الهاتف + تحويل حسب إجابة الحيازة ──
+  // ── التحقق من رقم الهاتف + تحديد الانتقال حسب إجابة الحيازة ──
   async function checkPhoneAndGo() {
     if (!validateStep(2)) return;
 
@@ -586,7 +587,7 @@
     const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
 
     if (!phone) {
-      alert('الرجاء إدخال رقم الهاتف');
+      showFieldError('phone', 'الرجاء إدخال رقم الهاتف');
       return;
     }
 
@@ -604,15 +605,16 @@
       if (result.exists) {
         alert('تم تسجيل طلبك مسبقاً');
       } else {
-        // ── التعديل الجديد: تحويل حسب إجابة الحيازة ──
+        // تحديد الانتقال حسب إجابة الحيازة
         if (hasLicense === 'لا') {
-          skippedLicense = true;  // تم تجاوز الخطوة 3
-          goStep(4);              // انتقال مباشر للخطوة 4
+          skippedLicense = true;
+          // تحديث النقطة 3 كـ "done" لأنها تم تخطيها
+          document.getElementById('dot3').classList.add('done');
+          goStep(4);
         } else {
           skippedLicense = false;
           goStep(3);
         }
-        // ───────────────────────────────────────────
       }
     } catch (e) {
       document.getElementById('loadingOverlay').classList.remove('show');
@@ -621,26 +623,23 @@
       alert('حدث خطأ في التحقق من رقم الهاتف');
     }
   }
-  // ───────────────────────────────────────────────────────────
 
-  // ── التعديل الجديد: زر الرجوع من الخطوة 4 يحترم التجاوز ──
+  // ── الرجوع من الخطوة 4 يحترم التجاوز ──
   function goBackFromStep4() {
     if (skippedLicense) {
-      goStep(2); // إذا تم تجاوز الخطوة 3، ارجع للخطوة 2
+      goStep(2);
     } else {
-      goStep(3); // وإلا ارجع للخطوة 3 كالمعتاد
+      goStep(3);
     }
   }
-  // ─────────────────────────────────────────────────────────
 
   function goStep(step) {
     if (step > currentStep && !validateStep(currentStep)) return;
 
-    // ── التعديل الجديد: إذا انتقلنا من 2 إلى 4، نحدث النقطة 3 كـ "done" ──
+    // إذا انتقلنا من 2 إلى 4 (تجاوز الخطوة 3)، نحدث النقطة 3 كـ "done"
     if (currentStep === 2 && step === 4) {
       document.getElementById('dot3').classList.add('done');
     }
-    // ───────────────────────────────────────────────────────────────────
 
     document.getElementById('step' + currentStep).classList.remove('active');
     document.getElementById('dot' + currentStep).classList.remove('active');
@@ -700,12 +699,24 @@
     }
   }
 
+  function showFieldError(id, msg) {
+    const el = document.getElementById(id);
+    const err = document.getElementById(id + '-err');
+    if (el) el.classList.add('error');
+    if (err) {
+      err.textContent = msg;
+      err.classList.add('show');
+    }
+  }
+
   function clearForm() {
     if (confirm('هل تريد محو جميع البيانات المدخلة؟')) {
       document.querySelectorAll('input[type="text"], input[type="tel"], input[type="number"], input[type="date"], select').forEach(el => el.value = '');
       document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
       document.getElementById('regionGroup').style.display = 'none';
       document.getElementById('region').innerHTML = '<option value="">اختيار</option>';
+      document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+      document.querySelectorAll('input.error, select.error').forEach(e => e.classList.remove('error'));
     }
   }
 
@@ -714,11 +725,11 @@
     document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.step-dot').forEach(d => { d.classList.remove('active','done'); });
     currentStep = 1;
-    skippedLicense = false; // ── إعادة تعيين المتغير ──
+    skippedLicense = false;
     document.getElementById('step1').classList.add('active');
     document.getElementById('dot1').classList.add('active');
     clearForm();
-    document.getElementById('submitBtn').disabled = false; // ── تفعيل زر الإرسال ──
+    document.getElementById('submitBtn').disabled = false;
     window.scrollTo(0, 0);
   }
 
