@@ -706,7 +706,7 @@
 if (step===2) {
       valid = checkField('phone',    v=>/^[79]\d{7}$/.test(v.trim())) && valid;
       valid = checkField('fullName', v=>/^[\u0600-\u06FF\s]+ (بن|بنت) [\u0600-\u06FF\s]+ بن [\u0600-\u06FF\s]+$/.test(v.trim())) && valid;
-      valid = checkField('civilId',  v=>/^\d+$/.test(v.trim()) && v.trim().length>=7) && valid;
+      valid = checkField('civilId',  v=>/^\d+$/.test(v.trim()) && v.trim().length>=5) && valid;
       const licVal = document.querySelector('input[name="hasLicense"]:checked');
       const licErr = document.getElementById('hasLicense-err');
       if (!licVal) { licErr.classList.add('show'); valid=false; } else licErr.classList.remove('show');
