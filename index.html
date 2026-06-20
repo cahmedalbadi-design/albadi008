@@ -163,12 +163,14 @@
     background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 60%, #c8a84b 100%);
     padding: 0; overflow: hidden;
   }
-  .header-inner {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 20px; max-width: 900px; margin: 0 auto;
+  .header-logo-area {
+    display: flex; justify-content: center; align-items: center;
+    padding: 18px 20px 14px;
   }
-  .header-text { color: white; text-align: right; }
-  .header-text h2 { font-size: 16px; font-weight: bold; line-height: 1.6; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+  .header-logo-area img {
+    max-width: 220px; max-height: 110px;
+    object-fit: contain; display: block;
+  }
   .header-label {
     background: rgba(255,255,255,0.2); color: white;
     text-align: center; padding: 5px; font-size: 12px;
@@ -261,13 +263,6 @@
     animation: spin 0.8s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .emblem {
-    width: 55px; height: 55px; background: white; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: #2d6a4f; font-weight: bold; text-align: center;
-    border: 2px solid rgba(255,255,255,0.5); overflow: hidden;
-  }
-  .emblem svg { width: 45px; height: 45px; }
 </style>
 <base target="_blank">
 </head>
@@ -353,17 +348,8 @@
 <!-- المحتوى الرئيسي -->
 <div class="project-banner">المشروع الوطني للتحصين</div>
 <div class="header">
-  <div class="header-inner">
-    <div class="header-text">
-      <h2>سلطنة عمان<br>وزارة الثروة الزراعية<br>والسمكية وموارد المياه</h2>
-    </div>
-    <div class="emblem">
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="48" fill="#c8a84b"/>
-        <circle cx="50" cy="50" r="40" fill="#2d6a4f"/>
-        <text x="50" y="55" text-anchor="middle" fill="white" font-size="12" font-family="Arial">عُمان</text>
-      </svg>
-    </div>
+  <div class="header-logo-area">
+    <img src="https://l.top4top.io/p_3823qfmrg1.png" alt="شعار وزارة الثروة الزراعية">
   </div>
   <div class="header-label">المديرية العامة للثروة الزراعية والسمكية وموارد المياه بمحافظة شمال الباطنة</div>
 </div>
@@ -384,7 +370,7 @@
     <!-- STEP 1 -->
     <div class="step-page active" id="step1">
       <div class="section">
-        <div class="section-header info">اختيار الولاية والمنطقة</div>
+        <div class="section-header info">اختر الولاية أولاً، ثم انتظر حتى يتم تحميل قائمة المناطق التابعة لها.</div>
         <div class="field-group">
           <label class="field-label">الولاية <span class="req">*</span></label>
           <select id="wilaya" onchange="onWilayaChange()">
@@ -513,9 +499,6 @@
 </div>
 
 <script>
-  // ══════════════════════════════════════════════════
-  //  الإعداد — رابط السيرفر فقط، لا توجد كلمات مرور
-  // ══════════════════════════════════════════════════
   const GAS = "https://script.google.com/macros/s/AKfycbzFa7UQnzSDH3xDMalSuWswXB_kZ3hoY8mqnBc17CpA_Scam1TkbOnvdpDa9hYw3sK53g/exec";
 
   const WILAYA_COLUMNS = {
@@ -526,12 +509,8 @@
   let currentStep    = 1;
   let skippedLicense = false;
   let serverStatus   = 'OPEN';
-  // نحفظ PIN فقط في الذاكرة بعد تسجيل الدخول — ولا يظهر في الكود أبداً
   let sessionPin     = null;
 
-  // ══════════════════════════════════════════════════
-  //  تهيئة الصفحة — جلب الحالة من السيرفر
-  // ══════════════════════════════════════════════════
   async function initPage() {
     try {
       const res  = await fetch(GAS + '?action=getRegistrationStatus');
@@ -549,13 +528,9 @@
     document.getElementById('closedScreen').classList.toggle('show', s === 'CLOSED');
   }
 
-  // ══════════════════════════════════════════════════
-  //  Admin overlay
-  // ══════════════════════════════════════════════════
   function openAdminOverlay() {
     document.getElementById('adminOverlay').classList.add('show');
     if (!sessionPin) {
-      // أظهر شاشة الدخول
       document.getElementById('adminLoginBox').style.display = 'block';
       document.getElementById('adminPanel').style.display    = 'none';
       document.getElementById('adminPwd').value = '';
@@ -571,7 +546,6 @@
     document.getElementById('adminOverlay').classList.remove('show');
   }
 
-  // ── التحقق من كلمة المرور عبر السيرفر ──
   async function adminLogin() {
     const pwd    = document.getElementById('adminPwd').value.trim();
     const inp    = document.getElementById('adminPwd');
@@ -589,7 +563,6 @@
       const data = await res.json();
 
       if (data.success) {
-        // احفظ PIN في الذاكرة فقط (session) — لا يُكتب في الكود
         sessionPin = pwd;
         showAdminPanel(data.status);
       } else {
@@ -633,7 +606,6 @@
     document.getElementById('btnClose').disabled = on;
   }
 
-  // ── تغيير الحالة — PIN يُرسل من الذاكرة وليس من الكود ──
   async function toggleStatus(target) {
     if (serverStatus === target || !sessionPin) return;
     setPanelLoading(true);
@@ -658,9 +630,6 @@
     closeAdminOverlay();
   }
 
-  // ══════════════════════════════════════════════════
-  //  منطق النموذج
-  // ══════════════════════════════════════════════════
   async function onWilayaChange() {
     const wilaya = document.getElementById('wilaya').value;
     const rg = document.getElementById('regionGroup');
@@ -814,7 +783,6 @@
     document.getElementById('loadingText').textContent='جارٍ التحميل...';
   }
 
-  // ══════════════════════════════════════════════════
   initPage();
 </script>
 </body>
