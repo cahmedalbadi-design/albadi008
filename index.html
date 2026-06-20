@@ -415,19 +415,19 @@
           <label class="field-label">رقم الهاتف <span class="req">*</span></label>
           <div class="field-hint">يجب إدخال رقم هاتف صحيح ليتمكن فريق التحصين من التواصل معك. في حال إدخال رقم غير صحيح سيتم إلغاء الطلب.</div>
           <input type="tel" id="phone" placeholder="إدخالك" maxlength="12">
-          <div class="error-msg" id="phone-err">الرجاء إدخال رقم هاتف صحيح</div>
+          <div class="error-msg" id="phone-err">رقم الهاتف يجب أن يكون 8 أرقام ويبدأ بـ 9 أو 7</div>
         </div>
         <div class="field-group">
           <label class="field-label">اسم المربي الثلاثي <span class="req">*</span></label>
           <div class="field-hint">مثال: فلان بن / بنت فلان بن فلان القبيلة</div>
           <input type="text" id="fullName" placeholder="إدخالك">
-          <div class="error-msg" id="fullName-err">الرجاء إدخال الاسم الثلاثي</div>
+          <div class="error-msg" id="fullName-err">يجب إدخال الاسم بصيغة: فلان بن/بنت فلان بن فلان القبيلة</div>
         </div>
         <div class="field-group">
           <label class="field-label">الرقم المدني <span class="req">*</span></label>
           <div class="field-hint">أدخل الرقم كاملاً بدون أي فواصل أو رموز إضافية</div>
           <input type="text" id="civilId" placeholder="إدخالك" maxlength="12">
-          <div class="error-msg" id="civilId-err">الرجاء إدخال الرقم المدني</div>
+          <div class="error-msg" id="civilId-err">الرقم المدني يجب أن يحتوي على أرقام فقط بدون فواصل أو رموز</div>
         </div>
         <div class="field-group">
           <label class="field-label">هل تمتلك حيازة حيوانية مسجلة؟ <span class="req">*</span></label>
@@ -703,10 +703,10 @@
       valid = checkField('wilaya', v=>v!=='') && valid;
       valid = checkField('region', v=>v!=='') && valid;
     }
-    if (step===2) {
-      valid = checkField('phone',    v=>v.trim().length>=8) && valid;
-      valid = checkField('fullName', v=>v.trim().length>=5) && valid;
-      valid = checkField('civilId',  v=>v.trim().length>=7) && valid;
+if (step===2) {
+      valid = checkField('phone',    v=>/^[79]\d{7}$/.test(v.trim())) && valid;
+      valid = checkField('fullName', v=>/^[\u0600-\u06FF\s]+ (بن|بنت) [\u0600-\u06FF\s]+ بن [\u0600-\u06FF\s]+$/.test(v.trim())) && valid;
+      valid = checkField('civilId',  v=>/^\d+$/.test(v.trim()) && v.trim().length>=7) && valid;
       const licVal = document.querySelector('input[name="hasLicense"]:checked');
       const licErr = document.getElementById('hasLicense-err');
       if (!licVal) { licErr.classList.add('show'); valid=false; } else licErr.classList.remove('show');
