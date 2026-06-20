@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>تسجل طلبات التحصين</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -181,7 +181,7 @@
     background: #2d6a4f; color: white; text-align: center;
     padding: 8px; font-size: 14px; font-weight: bold; letter-spacing: 1px;
   }
-  .main { max-width: 700px; margin: 20px auto; padding: 0 15px 40px; }
+  .main { max-width: 700px; margin: 20px auto; padding: 0 10px 40px; }
   .form-card { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
   .form-title { padding: 20px 25px 15px; border-bottom: 2px solid #e0e0e0; }
   .form-title h1 { font-size: 22px; font-weight: bold; color: #1a1a1a; margin-bottom: 8px; }
@@ -264,6 +264,17 @@
     animation: spin 0.8s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+ @media (max-width: 480px) {
+    .header-logo-area img { max-width: 260px; max-height: 130px; }
+    .form-title h1 { font-size: 17px; }
+    .section { padding: 15px 15px; }
+    .section-header { margin: -15px -15px 15px; }
+    .btn-row { padding: 12px 15px; gap: 8px; }
+    .btn { padding: 10px 16px; font-size: 13px; }
+    .btn-submit { padding: 10px 20px; }
+    .closed-card { padding: 30px 20px; }
+    #adminPanel, #adminLoginBox { width: 92vw; padding: 25px 18px; }
+  }
 </style>
 <base target="_blank">
 </head>
