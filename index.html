@@ -715,10 +715,31 @@ if (step===2) {
       valid = checkField('licenseNum',    v=>v.trim().length>=3) && valid;
       valid = checkField('licenseExpiry', v=>v.trim()!=='')       && valid;
     }
-    if (step===4) {
-      valid = checkField('goats', v=>v!=='') && valid;
-      valid = checkField('sheep', v=>v!=='') && valid;
-      valid = checkField('cows',  v=>v!=='') && valid;
+if (step===4) {
+      const goats = document.getElementById('goats').value;
+      const sheep = document.getElementById('sheep').value;
+      const cows  = document.getElementById('cows').value;
+      const filled = [goats, sheep, cows].filter(v => v !== '' && parseInt(v) > 0).length;
+      if (filled === 0) {
+        document.getElementById('goats').classList.add('error');
+        document.getElementById('sheep').classList.add('error');
+        document.getElementById('cows').classList.add('error');
+        document.getElementById('goats-err').textContent = 'يجب إدخال عدد نوع واحد فقط من الحيوانات';
+        document.getElementById('goats-err').classList.add('show');
+        valid = false;
+      } else if (filled > 1) {
+        document.getElementById('goats').classList.add('error');
+        document.getElementById('sheep').classList.add('error');
+        document.getElementById('cows').classList.add('error');
+        document.getElementById('goats-err').textContent = 'لا يمكن إدخال أكثر من نوع واحد من الحيوانات';
+        document.getElementById('goats-err').classList.add('show');
+        valid = false;
+      } else {
+        ['goats','sheep','cows'].forEach(id => {
+          document.getElementById(id).classList.remove('error');
+          document.getElementById(id+'-err').classList.remove('show');
+        });
+      }
     }
     return valid;
   }
