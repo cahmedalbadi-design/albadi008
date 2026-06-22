@@ -671,10 +671,14 @@
     const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
     showLoading('جاري التحقق من رقم الهاتف...');
     try {
-      const res    = await fetch(GAS+'?action=checkPhone&phone='+encodeURIComponent(phone));
-      const result = await res.json();
-      hideLoading();
-      if (result.exists) { alert('تم تسجيل طلبك مسبقاً'); }
+const civilId = document.getElementById('civilId').value.trim();
+const res    = await fetch(GAS+'?action=checkPhone&phone='+encodeURIComponent(phone)+'&civilId='+encodeURIComponent(civilId));
+const result = await res.json();
+hideLoading();
+if (result.exists) {
+  const msg = result.reason === 'civilId' ? 'الرقم المدني مسجل مسبقاً' : 'رقم الهاتف مسجل مسبقاً';
+  alert(msg);
+}
       else {
         if (hasLicense === 'لا') { skippedLicense=true; document.getElementById('dot3').classList.add('done'); goStep(4); }
         else { skippedLicense=false; goStep(3); }
