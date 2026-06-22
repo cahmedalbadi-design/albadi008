@@ -669,7 +669,7 @@
     if (!validateStep(2)) return;
     const phone      = document.getElementById('phone').value.trim();
     const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
-    showLoading('جاري التحقق من رقم الهاتف...');
+    showLoading('جاري التحقق من البيانات...');
     try {
 const civilId = document.getElementById('civilId').value.trim();
 const res    = await fetch(GAS+'?action=checkPhone&phone='+encodeURIComponent(phone)+'&civilId='+encodeURIComponent(civilId));
