@@ -444,7 +444,15 @@
         <button class="btn btn-next" onclick="checkPhoneAndGo()">التالي</button>
       </div>
     </div>
-
+<div id="duplicateMsg" style="display:none; background:#fff3cd; border:1px solid #f0ad4e; border-radius:6px; padding:12px 15px; margin-top:10px; font-size:13px; color:#856404;">
+  <div id="duplicateTxt" style="margin-bottom:10px;"></div>
+  <button class="btn btn-next" onclick="updateExistingRecord()" style="padding:8px 20px; font-size:13px;">
+    🔄 تحديث البيانات
+  </button>
+  <button class="btn btn-back" onclick="hideDuplicateMsg()" style="padding:8px 16px; font-size:13px; margin-right:8px;">
+    إلغاء
+  </button>
+</div>
     <!-- STEP 3 -->
     <div class="step-page" id="step3">
       <div class="section">
@@ -534,6 +542,43 @@
     applyStatus(serverStatus);
     document.getElementById('initScreen').style.display = 'none';
   }
+ async function updateExistingRecord() {
+  const hasLicense  = document.querySelector('input[name="hasLicense"]:checked')?.value;
+  const skipLicense = (hasLicense === 'لا');
+
+  // جمع البيانات المتاحة حتى step2 + ما في step3/4 إن وُجد
+  const data = {
+    action:        'update',
+    phone:         document.getElementById('phone').value,
+    civilId:       document.getElementById('civilId').value,
+    fullName:      document.getElementById('fullName').value,
+    wilaya:        document.getElementById('wilaya').value,
+    region:        document.getElementById('region').value,
+    licenseNum:    skipLicense ? '' : (document.getElementById('licenseNum').value || ''),
+    licenseExpiry: skipLicense ? '' : (document.getElementById('licenseExpiry').value || ''),
+    goats:         document.getElementById('goats').value || '',
+    sheep:         document.getElementById('sheep').value || '',
+    cows:          document.getElementById('cows').value || '',
+    dateOnly:      new Date().toISOString().split('T')[0],
+  };
+
+  showLoading('جارٍ تحديث البيانات...');
+  hideDuplicateMsg();
+  try {
+    const formData = new FormData();
+    Object.keys(data).forEach(k => formData.append(k, data[k]));
+    await fetch(GAS, { method:'POST', mode:'no-cors', body:formData });
+    hideLoading();
+    document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
+    document.getElementById('successScreen').classList.add('show');
+    document.getElementById('successScreen').querySelector('.success-title').textContent = 'تم تحديث بياناتك بنجاح!';
+    document.getElementById('successScreen').querySelector('.success-msg').textContent =
+      'تم تحديث طلب التحصين الخاص بك بنجاح.';
+  } catch(e) {
+    hideLoading();
+    alert('حدث خطأ في التحديث. يرجى المحاولة مجدداً.');
+  }
+}
 
   function applyStatus(s) {
     serverStatus = s;
@@ -665,26 +710,31 @@
     } catch(e) { rs.innerHTML='<option value="">خطأ في التحميل</option>'; }
   }
 
-  async function checkPhoneAndGo() {
-    if (!validateStep(2)) return;
-    const phone      = document.getElementById('phone').value.trim();
-    const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
-    showLoading('جاري التحقق من البيانات...');
-    try {
-const civilId = document.getElementById('civilId').value.trim();
-const res    = await fetch(GAS+'?action=checkPhone&phone='+encodeURIComponent(phone)+'&civilId='+encodeURIComponent(civilId));
-const result = await res.json();
-hideLoading();
-if (result.exists) {
-  const msg = result.reason === 'civilId' ? 'الرقم المدني مسجل مسبقاً' : 'رقم الهاتف مسجل مسبقاً';
-  alert(msg);
+ async function checkPhoneAndGo() {
+  if (!validateStep(2)) return;
+  hideDuplicateMsg();
+  const phone      = document.getElementById('phone').value.trim();
+  const hasLicense = document.querySelector('input[name="hasLicense"]:checked')?.value;
+  showLoading('جاري التحقق من البيانات...');
+  try {
+    const civilId = document.getElementById('civilId').value.trim();
+    const res     = await fetch(GAS+'?action=checkPhone&phone='+encodeURIComponent(phone)+'&civilId='+encodeURIComponent(civilId));
+    const result  = await res.json();
+    hideLoading();
+    if (result.exists) {
+      const msg = result.reason === 'civilId' ? 'الرقم المدني مسجل مسبقاً' : 'رقم الهاتف مسجل مسبقاً';
+      document.getElementById('duplicateTxt').textContent = '⚠️ ' + msg + ' — هل تريد تحديث بياناتك؟';
+      document.getElementById('duplicateMsg').style.display = 'block';
+    } else {
+      if (hasLicense === 'لا') { skippedLicense=true; document.getElementById('dot3').classList.add('done'); goStep(4); }
+      else { skippedLicense=false; goStep(3); }
+    }
+  } catch(e) { hideLoading(); alert('حدث خطأ في التحقق من رقم الهاتف'); }
 }
-      else {
-        if (hasLicense === 'لا') { skippedLicense=true; document.getElementById('dot3').classList.add('done'); goStep(4); }
-        else { skippedLicense=false; goStep(3); }
-      }
-    } catch(e) { hideLoading(); alert('حدث خطأ في التحقق من رقم الهاتف'); }
-  }
+
+function hideDuplicateMsg() {
+  document.getElementById('duplicateMsg').style.display = 'none';
+}
 
   function goBackFromStep4() { goStep(skippedLicense ? 2 : 3); }
 
