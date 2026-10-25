@@ -1075,7 +1075,10 @@ input.error,select.error{border-color:var(--danger);background:#fff8f8}
         p_sheep:      num('sheep'),
         p_cattle:     num('cows'),
         p_camels:     null,
-        p_notes:      userLoc ? ('الموقع: https://maps.google.com/?q=' + userLoc.lat + ',' + userLoc.lng) : ''
+                p_notes:      '',
+        p_lat:        userLoc ? Number(userLoc.lat) : null,
+        p_lng:        userLoc ? Number(userLoc.lng) : null,
+        p_acc:        userLoc ? userLoc.acc : null
       });
       hideLoading();
       if (!res || !res.ok) {
