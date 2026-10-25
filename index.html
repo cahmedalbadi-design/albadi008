@@ -914,8 +914,7 @@ input.error,select.error{border-color:var(--danger);background:#fff8f8}
   }
 
   function clearForm(skipConfirm) {
-    if (!skipConfirm && !confirm('هل تريد محو جميع البيانات المدخلة؟')) return;
-
+    if (!skipConfirm) { openConfirm(); return; }
     document.querySelectorAll('input[type="text"],input[type="tel"],input[type="number"],input[type="date"],select')
       .forEach(el => el.value = '');
     document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
@@ -938,6 +937,14 @@ input.error,select.error{border-color:var(--danger);background:#fff8f8}
     document.getElementById('stepper').style.display = '';
     updateProgress();
     window.scrollTo(0, 0);
+  }
+    function openConfirm() {
+    document.getElementById('confirmModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeConfirm() {
+    document.getElementById('confirmModal').classList.remove('show');
+    document.body.style.overflow = '';
   }
 
   function resetForm() {
